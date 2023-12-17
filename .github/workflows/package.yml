@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     container: 
       image: archlinux:latest
-      # options: --user builder
+      options: --user builder
 
     steps:
 
@@ -28,9 +28,9 @@ jobs:
 
     - name: Install dependencies
       run: |
-        sudo pacman-key --init
-        sudo pacman-key --populate
-        sudo pacman -Syyu --noconfirm sudo base-devel git curl openssh make archiso mkinitcpio-archiso
+        pacman-key --init
+        pacman-key --populate
+        pacman -Syyu --noconfirm sudo base-devel git curl openssh make archiso mkinitcpio-archiso
 
     - name: Import SSH key  
       env:  
