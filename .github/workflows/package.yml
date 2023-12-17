@@ -21,8 +21,7 @@ jobs:
       run: |
         pacman-key --init; pacman-key --populate
         pacman -Syyu --noconfirm
-        pacman -S --noconfirm base-devel git curl
-        curl -L https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=pikaur -o PKGBUILD
+        pacman -S --noconfirm base-devel git curl openssh
 
     - name: Import SSH key  
       env:  
