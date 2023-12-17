@@ -14,24 +14,24 @@ jobs:
     runs-on: ubuntu-latest
     container: 
       image: archlinux
-      options: --user builder
+      # options: --user builder
 
     steps:
     
-    - name: Add builder user
-      run: |  
-        pacman -Syu --noconfirm sudo
-        echo 'builder ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
-        useradd -m -s /bin/bash -G wheel builder
+    # - name: Add builder user
+    #   run: |  
+    #     pacman -Syu --noconfirm sudo
+    #     echo 'builder ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+    #     useradd -m -s /bin/bash -G wheel builder
     
     - uses: actions/checkout@v3
 
     - name: Install dependencies
       run: |
-        su builder -c 'sudo pacman-key --init'
-        su builder -c 'sudo pacman-key --populate'
-        su builder -c 'sudo pacman -Syyu --noconfirm'
-        su builder -c 'sudo pacman -S --noconfirm base-devel git curl openssh make archiso mkinitcpio-archiso'
+        sudo pacman-key --init
+        sudo pacman-key --populate
+        sudo pacman -Syyu --noconfirm
+        sudo pacman -S --noconfirm base-devel git curl openssh make archiso mkinitcpio-archiso
       
     - name: Import SSH key  
       env:  
@@ -43,15 +43,13 @@ jobs:
 
     - name: Build packages
       run: |  
-        su builder -c '
-          for dir in x86_64/*/; do 
-            cd $dir
-            NAME=${dir%*/}
-            curl -sSL https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=$NAME > ./PKGBUILD
-            sudo makepkg --syncdeps --needed --noconfirm --noprogressbar --nocheck
-            cd -  
-          done
-        '
+        for dir in x86_64/*/; do 
+          cd $dir
+          NAME=${dir%*/}
+          curl -sSL https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=$NAME > ./PKGBUILD
+          sudo makepkg --syncdeps --needed --noconfirm --noprogressbar --nocheck
+          cd -  
+        done
 
     - name: Push packages
       run: |
