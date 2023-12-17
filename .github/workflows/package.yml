@@ -43,7 +43,7 @@ jobs:
         for dir in x86_64/*/; do 
           cd $dir
           NAME=${dir%*/}
-          curl -sSL https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=$NAME > ./PKGBUILD
+          curl -sSL https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h="$NAME" > ./PKGBUILD
           docker build -t builder -f docker/Dockerfile $dir
           docker run --rm builder
           cd -
