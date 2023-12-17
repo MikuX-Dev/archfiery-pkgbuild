@@ -21,7 +21,7 @@ jobs:
       run: |
         pacman-key --init; pacman-key --populate
         pacman -Syyu --noconfirm
-        pacman -S --noconfirm base-devel git curl openssh
+        pacman -S --noconfirm base-devel git curl openssh make archiso mkinitcpio-archiso
 
     - name: Import SSH key  
       env:  
