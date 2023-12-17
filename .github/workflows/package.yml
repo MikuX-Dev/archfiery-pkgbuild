@@ -59,7 +59,7 @@ jobs:
         git clone $REMOTE_REPO out
       
         for dir in x86_64/*/; do
-          cp $dir/*.zst out/x86_64/
+          cp $dir/*.* out/x86_64/
         done
       
         cd out
