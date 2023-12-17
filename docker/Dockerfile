@@ -22,6 +22,6 @@ WORKDIR /src
 COPY --chown=builder:users . .
 
 # Run entrypoint
-ENTRYPOINT ["makepkg"]
+ENTRYPOINT ["./build-packages.sh"]
 
-CMD ["-s", "-f", "--noconfirm", "--needed", "--noprogressbar"]
+CMD ["./build-packages.sh"]
