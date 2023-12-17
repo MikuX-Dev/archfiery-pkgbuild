@@ -9,35 +9,34 @@
 # get hidden bugs that are hard to discover.
 set -euo pipefail
 
-echo "$0"
-full_path=$(realpath "$0")
-dir_path=${full_path%/*}
-
 bold2=$(tput bold setaf 2)
 bold3=$(tput bold setaf 3)
 bold4=$(tput bold setaf 4)
 cleanse=$(tput sgr0)
 
-readarray -t x86_list <<<"$(find x86_64/ -type f -name PKGBUILD | awk -F / '{print $2}')"
+pkg_dir="pkg"
 
-for x in "${x86_list[@]}"; do
-  cd "${dir_path}"/x86_64/"${x}"
-  git clone "https://aur.archlinux.org/${x}.git" &>/dev/null
+# Create the pkg directory if it doesn't exist
+mkdir -p "$pkg_dir"
 
-  if [ -f "${x}/PKGBUILD" ]; then
-    if cmp --silent -- "PKGBUILD" "${x}/PKGBUILD"; then
-      echo -e "${bold3}## Checking the PKGBUILD:${cleanse}  PKGBUILD for ${x} has not changed."
+for dir in x86_64/*/; do
+  cd "$dir"
+  NAME=${dir%*/}
+  curl -sSL "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=$NAME" -o ./PKGBUILD
+  if [ -f PKGBUILD ]; then
+    if cmp --silent -- "PKGBUILD" "./PKGBUILD"; then
+      echo -e "${bold3}## Checking the PKGBUILD:${cleanse}  PKGBUILD for $NAME has not changed."
+      makepkg -sf --noconfirm --needed --noprogressbar
     else
-      echo -e "${bold4}++ Checking the PKGBUILD:${cleanse}  PKGBUILD for ${x} has changed."
-      mv "${x}/PKGBUILD" PKGBUILD
-      makepkg -scf || echo "FAILED TO MAKE PACKAGE: ${x}"
+      echo -e "${bold4}++ Checking the PKGBUILD:${cleanse}  PKGBUILD for $NAME has changed."
+      mv "./PKGBUILD" PKGBUILD
+      makepkg -sf --noconfirm --needed --noprogressbar || echo "FAILED TO MAKE PACKAGE: $NAME"
     fi
+
+    # Copy package files to the pkg directory
+    cp -r *.tar.* "$pkg_dir"
   else
-    echo -e "${bold2}@@ PKGBUILD not available:${cleanse} ${x} is not in the AUR. Rebuilding anyway!"
-    rm -rf "${dir_path}"/x86_64/"${x}"/"${x}"
-    makepkg -scf || echo "FAILED TO MAKE PACKAGE: ${x}"
+    echo -e "${bold2}@@ PKGBUILD not available:${cleanse} $NAME is not in the AUR. Skipping!"
   fi
-
-  rm -rf "${dir_path}"/x86_64/"${x}"/"${x}"
-
+  cd -
 done
