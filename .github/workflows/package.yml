@@ -14,23 +14,20 @@ jobs:
     runs-on: ubuntu-latest
     container: 
       image: archlinux:latest
-      # options: --user builder
 
     steps:
-
-    # - name: Add builder user
-    #   run: |  
-    #     pacman -Syu --noconfirm sudo
-    #     useradd -m -s /bin/bash -G wheel builder
-    #     sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' /etc/sudoers
-
     - uses: actions/checkout@v3
 
     - name: Install dependencies
       run: |
+        sed -i "s/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g" /etc/locale.gen
+        locale-gen
+        echo "LANG=en_US.UTF-8" > /etc/locale.conf
+        echo 'KEYMAP=us' > /etc/vconsole.conf
+
         pacman-key --init
         pacman-key --populate
-        pacman -Syyu --noconfirm base-devel git curl openssh make archiso mkinitcpio-archiso
+        pacman -Syyu --noconfirm base-devel git curl openssh make archiso mkinitcpio-archiso docker docker-buildx
 
     - name: Import SSH key  
       env:  
@@ -49,7 +46,7 @@ jobs:
           curl -sSL https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=$NAME > ./PKGBUILD
           docker build -t builder -f docker/Dockerfile $dir
           docker run --rm builder
-          cd -  
+          cd -
         done
 
     - name: Push packages
