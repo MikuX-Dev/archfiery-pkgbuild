@@ -12,7 +12,9 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    container: archlinux
+    container: 
+      image: archlinux
+      options: --user builder
 
     steps:
     - uses: actions/checkout@v3
@@ -23,9 +25,9 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pacman-key --init; pacman-key --populate
-        pacman -Syyu --noconfirm
-        pacman -S --noconfirm base-devel git curl openssh make archiso mkinitcpio-archiso
+        sudo pacman-key --init; sudo pacman-key --populate
+        sudo pacman -Syyu --noconfirm
+        sudo pacman -S --noconfirm base-devel git curl openssh make archiso mkinitcpio-archiso
       
     - name: Import SSH key  
       env:  
@@ -44,7 +46,6 @@ jobs:
           makepkg --syncdeps --needed --noconfirm --noprogressbar --nocheck
           cd -
         done
-      user: builder
 
     - name: Push packages
       run: |
