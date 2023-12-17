@@ -46,7 +46,7 @@ jobs:
           cd $dir
           NAME=${dir%*/}
           curl -sSL https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=$NAME > ./PKGBUILD
-          sudo makepkg --syncdeps --needed --noconfirm --noprogressbar --nocheck
+          makepkg --syncdeps --needed --noconfirm --noprogressbar --nocheck
           cd -  
         done
 
