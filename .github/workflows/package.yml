@@ -17,11 +17,14 @@ jobs:
       options: --user builder
 
     steps:
-    - uses: actions/checkout@v3
-
-    - name: Add builder user  
+    
+    - name: Add builder user
       run: |
-        groupadd -r builder && useradd -m -r -g builder builder
+        pacman -Syu --noconfirm sudo
+        useradd -m builder
+        echo 'builder ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+    
+    - uses: actions/checkout@v3
 
     - name: Install dependencies
       run: |
