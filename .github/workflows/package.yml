@@ -21,7 +21,8 @@ jobs:
       run: |
         pacman-key --init; pacman-key --populate
         pacman -Syyu --noconfirm
-        pacman -S --noconfirm base-devel git
+        pacman -S --noconfirm base-devel git curl
+        curl -L https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=pikaur -o PKGBUILD
 
     - name: Import SSH key  
       env:  
@@ -35,6 +36,8 @@ jobs:
       run: |
         for dir in x86_64/*/; do
           cd $dir
+          NAME=${dir%*/}
+          curl -sSL https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=$NAME > ./PKGBUILD
           makepkg --syncdeps --install --nocheck
           cd -
         done
