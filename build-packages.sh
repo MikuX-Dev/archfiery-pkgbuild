@@ -7,7 +7,7 @@
 # Set with the flags "-e", "-u","-o pipefail" cause the script to fail
 # if certain things happen, which is a good thing.  Otherwise, we can
 # get hidden bugs that are hard to discover.
-set -euo pipefail
+#set -euo pipefail
 
 bold2=$(tput bold setaf 2)
 bold3=$(tput bold setaf 3)
