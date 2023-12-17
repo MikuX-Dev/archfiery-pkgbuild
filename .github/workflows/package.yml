@@ -19,18 +19,19 @@ jobs:
     steps:
     
     - name: Add builder user
-      run: |
+      run: |  
         pacman -Syu --noconfirm sudo
-        useradd -m builder
         echo 'builder ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+        useradd -m -s /bin/bash -G wheel builder
     
     - uses: actions/checkout@v3
 
     - name: Install dependencies
       run: |
-        sudo pacman-key --init; sudo pacman-key --populate
-        sudo pacman -Syyu --noconfirm
-        sudo pacman -S --noconfirm base-devel git curl openssh make archiso mkinitcpio-archiso
+        su builder -c 'sudo pacman-key --init'
+        su builder -c 'sudo pacman-key --populate'
+        su builder -c 'sudo pacman -Syyu --noconfirm'
+        su builder -c 'sudo pacman -S --noconfirm base-devel git curl openssh make archiso mkinitcpio-archiso'
       
     - name: Import SSH key  
       env:  
@@ -41,14 +42,16 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' | ssh-add - > /dev/null
 
     - name: Build packages
-      run: |
-        for dir in x86_64/*/; do
-          cd $dir
-          NAME=${dir%*/}
-          curl -sSL https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=$NAME > ./PKGBUILD
-          makepkg --syncdeps --needed --noconfirm --noprogressbar --nocheck
-          cd -
-        done
+      run: |  
+        su builder -c '
+          for dir in x86_64/*/; do 
+            cd $dir
+            NAME=${dir%*/}
+            curl -sSL https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=$NAME > ./PKGBUILD
+            sudo makepkg --syncdeps --needed --noconfirm --noprogressbar --nocheck
+            cd -  
+          done
+        '
 
     - name: Push packages
       run: |
