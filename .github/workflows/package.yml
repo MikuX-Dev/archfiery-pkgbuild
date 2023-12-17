@@ -39,24 +39,14 @@ jobs:
 
     - name: Build packages
       run: |
-        ls -al; ls ../
-        for dir in x86_64/*/; do 
-          cd $dir
-          NAME=${dir%*/}
-          curl -sSL https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h="$NAME" -o ./PKGBUILD
-          docker build -t builder -f docker/Dockerfile $dir
-          docker run --rm builder
-          cd -
-        done
+        chmod +x build-packages.sh | ./build-packages.sh
 
     - name: Push packages
       run: |
         REMOTE_REPO="ssh://git@github.com/MikuX-Dev/archfiery-repo.git"
         git clone $REMOTE_REPO out/
 
-        for dir in x86_64/*/; do
-          cp $dir/*.* out/x86_64/
-        done
+        cp -r pkg/* out/x86_64/
 
         cd out/
         git config user.name "GitHub Actions Bot"
