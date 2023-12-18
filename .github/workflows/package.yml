@@ -31,13 +31,10 @@ jobs:
 
     - name: Import SSH key
       run: |
-        mkdir -p ~/.ssh/
-        echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+        mkdir ~/.ssh/
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
-        eval "$(ssh-agent -s)"
-        ssh-add ~/.ssh/id_rsa
         ssh-keyscan github.com >> ~/.ssh/known_hosts
-        chmod 644 ~/.ssh/known_hosts
 
     - name: Build packages
       run: |
@@ -45,6 +42,6 @@ jobs:
         ./build-docker.sh
 
     - name: Push packages
-      run: |
+      run: | 
         chmod 755 push.sh
         ./push.sh
