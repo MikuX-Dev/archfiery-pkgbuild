@@ -29,29 +29,22 @@ jobs:
         pacman-key --populate
         pacman -Syyu --noconfirm base-devel git curl openssh make archiso mkinitcpio-archiso docker docker-buildx
 
-    - name: Import SSH key  
-      env:  
-        SSH_AUTH_SOCK: /tmp/ssh_agent.sock  
+    - name: Import SSH key
       run: |
-        mkdir -p ~/.ssh
-        ssh-agent -a $SSH_AUTH_SOCK > /dev/null
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' | ssh-add - > /dev/null
+        mkdir -p ~/.ssh/
+        echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        eval "$(ssh-agent -s)"
+        ssh-add ~/.ssh/id_rsa
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
+        chmod 644 ~/.ssh/known_hosts
 
     - name: Build packages
       run: |
-        chmod 755 build-packages.sh
-        ./build-packages.sh
+        chmod 755 build-docker.sh
+        ./build-docker.sh
 
     - name: Push packages
       run: |
-        REMOTE_REPO="ssh://git@github.com/MikuX-Dev/archfiery-repo.git"
-        git clone $REMOTE_REPO out/
-
-        cp -r pkg/* out/x86_64/
-
-        cd out/
-        git config user.name "GitHub Actions Bot"
-        git config user.email "actions@github.com"
-        git add .
-        git commit -m "Add packages built from ${GITHUB_REF##*/}"
-        git push
+        chmod 755 push.sh
+        ./push.sh

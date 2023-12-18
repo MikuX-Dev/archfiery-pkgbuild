@@ -7,12 +7,7 @@
 # Set with the flags "-e", "-u","-o pipefail" cause the script to fail
 # if certain things happen, which is a good thing.  Otherwise, we can
 # get hidden bugs that are hard to discover.
-#set -euo pipefail
-
-pkg_dir="pkg"
-
-# Create the pkg directory if it doesn't exist
-mkdir -p "$pkg_dir"
+set -euo pipefail
 
 for dir in x86_64/*/; do
   cd "$dir"
@@ -27,9 +22,6 @@ for dir in x86_64/*/; do
       mv "./PKGBUILD" PKGBUILD
       makepkg -sf --noconfirm --needed --noprogressbar || echo "FAILED TO MAKE PACKAGE: $NAME"
     fi
-
-    # Copy package files to the pkg directory
-    cp -r *.tar.* "$pkg_dir"
   else
     echo "@@ PKGBUILD not available: $NAME is not in the AUR. Skipping!"
   fi
