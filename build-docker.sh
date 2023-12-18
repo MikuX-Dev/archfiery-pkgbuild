@@ -11,7 +11,7 @@ set -euo pipefail
 
 # build and run docker
 docker build -t archpkgb -f docker/Dockerfile
-docker run --rm -v $(pwd):. archpkgb
+docker run --rm archpkgb
 
 # Exec the build-packages.sh
 chmod 755 build-packages.sh
