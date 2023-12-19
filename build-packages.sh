@@ -43,7 +43,7 @@ for dir in x86_64/*/; do
     continue
   fi
 
-  cp -r *.tar.* "$output_dir/"
+  cp -r -- *.tar.* "$output_dir/"
   cd -
 done
 echo "Done building packages"
