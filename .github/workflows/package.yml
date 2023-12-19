@@ -38,10 +38,9 @@ jobs:
 
     - name: Build packages
       run: |
-        chmod 755 build-docker.sh
-        ./build-docker.sh
+        docker build -t archpkgb -f docker/Dockerfile
+        docker run --rm archpkgb
 
     - name: Push packages
-      run: | 
-        chmod 755 push.sh
+      run: |
         ./push.sh
