@@ -39,9 +39,10 @@ jobs:
     - name: Build packages
       run: |
         mkdir output/
+        mkdir src/
 
         docker build -t archpkgb -f Dockerfile .
-        docker run -i --rm -v .:/src archpkgb
+        docker run -i --rm -v $(pwd):/src archpkgb
 
     - name: Push packages
       run: |
