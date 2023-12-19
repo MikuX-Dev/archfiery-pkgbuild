@@ -43,7 +43,8 @@ for dir in x86_64/*/; do
     continue
   fi
 
-  cp -r -- *.tar.* "$output_dir/"
+  # shellcheck disable=SC2035
+  cp -r *.tar.* "$output_dir/"
   cd -
 done
 echo "Done building packages"
