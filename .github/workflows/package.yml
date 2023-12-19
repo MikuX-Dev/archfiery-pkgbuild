@@ -38,7 +38,7 @@ jobs:
 
     - name: Build packages
       run: |
-        docker build -t archpkgb -f docker/Dockerfile
+        docker build -t archpkgb -f docker/Dockerfile .
         docker run --rm archpkgb
 
     - name: Push packages

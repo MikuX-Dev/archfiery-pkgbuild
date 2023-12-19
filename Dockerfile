@@ -22,6 +22,6 @@ WORKDIR /src
 COPY --chown=builder:users . .
 
 # Run entrypoint
-ENTRYPOINT ["build-packages.sh"]
+ENTRYPOINT ["./build-packages.sh"]
 
 CMD ["./build-packages.sh"]
