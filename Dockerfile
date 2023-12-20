@@ -16,9 +16,9 @@ RUN useradd -m -d /src -G wheel -g users builder -s /bin/bash && \
 # Change to user builder
 USER builder
 
-WORKDIR /tmp
+WORKDIR /src
+
+COPY --chown=builder:users . .
 
 # Run entrypoint
-ENTRYPOINT ["./build-packages.sh"]
-
-CMD ["./build-packages.sh"]
+ENTRYPOINT ["/tmp/build-packages.sh"]

@@ -35,13 +35,15 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan github.com >> ~/.ssh/known_hosts
+        eval "$(ssh-agent -s)"
+        ssh-add ~/.ssh/id_rsa
 
     - name: Build packages
       run: |
         mkdir output/
 
         docker build -t archpkgb -f Dockerfile .
-        docker run -i -d --rm -v $(pwd):/tmp archpkgb
+        docker run -i -d --rm -v $(pwd):/src archpkgb
 
     - name: Push packages
       run: |
