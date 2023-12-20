@@ -16,8 +16,6 @@ RUN useradd -m -d /src -G wheel -g users builder -s /bin/bash && \
 # Change to user builder
 USER builder
 
-WORKDIR /src
-
 COPY --chown=builder:users . .
 
 # Run entrypoint
