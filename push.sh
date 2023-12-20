@@ -18,10 +18,12 @@ REMOTE_REPO="ssh://git@github.com/MikuX-Dev/archfiery-repo.git"
 # clone the repository
 git clone $REMOTE_REPO out/
 
-# copy package
-for dir in x86_64/*/; do
-  cp -r "$dir"/*.tar.* out/x86_64/ # "$pkg_dir"
-done
+# # copy package
+# for dir in x86_64/*/; do
+#   cp -r "$dir"/*.tar.* out/x86_64/ # "$pkg_dir"
+# done
+
+cp -r output/* out/x86_64/
 
 cd out/
 git config user.name "GitHub Actions Bot"
