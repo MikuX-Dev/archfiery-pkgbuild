@@ -36,8 +36,17 @@ jobs:
         mkdir output/
 
         docker build -t archpkgb -f Dockerfile .
-        docker run -i -d --rm -v $(pwd):/tmp archpkgb
+        docker run -i -d --rm -v $(pwd):/src archpkgb
 
     - name: Push packages
       run: |
-        ./push.sh
+        git clone git@github.com:MikuX-Dev/archfiery-repo.git out/
+
+        cp -r output/* out/x86_64/
+        cd out/
+
+        git config user.name "GitHub Actions Bot"
+        git config user.email "actions@github.com"
+        git add .
+        git commit -m "Add packages built from ${GITHUB_REF##*/}"
+        git push
