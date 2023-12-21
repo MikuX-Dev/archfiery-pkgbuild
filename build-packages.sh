@@ -14,18 +14,15 @@ output_dir="output"
 for dir in x86_64/*/; do
   cd "$dir"
   NAME=${dir%*/}
+
   if [[ ! $NAME =~ ^[a-z0-9_-]+$ ]]; then
-    echo "Invalid name: $NAME" >&2
-    continue
+    echo "Invalid name: $NAME"
+    exit 1
   fi
 
-  if ! makepkg -sf --noconfirm --needed --noprogressbar; then
-    echo "Failed to build $NAME" >&2
-    continue
-  fi
+  makepkg -sf --noconfirm --needed --noprogressbar || exit 1
 
-  # shellcheck disable=SC2035
-  cp -r *.tar.* "$output_dir/"
+  cp *.tar.* "$output_dir/"
   cd -
 done
 echo "Done building packages"
