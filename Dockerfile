@@ -11,8 +11,8 @@ RUN sudo pacman --noconfirm --noprogressbar --needed -Syy base-devel
 
 # # Change to user builder
 # USER builder
-COPY . .
-WORKDIR /home/builder/src
+# COPY . .
+# WORKDIR /home/builder/src
 
 # Run entrypoint
 ENTRYPOINT ["./build-packages.sh"]
