@@ -12,7 +12,7 @@ RUN pacman-key --init && \
 RUN pacman --noconfirm --noprogressbar --needed -Syy base-devel
 
 # Add builder User
-RUN useradd --disabled-password -rm -d /home/builder/ -s /bin/bash -g users -G wheel builder
+RUN useradd -rm -s /bin/bash -g users -G wheel builder
 
 # Change to user builder
 USER builder
@@ -20,7 +20,7 @@ WORKDIR /home/builder/src
 
 RUN chown -R builder:users /home/builder/src
 
-# COPY --chown=builder:users . .
+COPY --chown=builder:users . .
 
 # Run entrypoint
 ENTRYPOINT ["./build-packages.sh"]
