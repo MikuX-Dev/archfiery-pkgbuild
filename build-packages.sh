@@ -9,20 +9,12 @@
 # get hidden bugs that are hard to discover.
 set -euo pipefail
 
-output_dir="output"
+output_dir="output/"
 
 for dir in x86_64/*/; do
   cd "$dir"
-  NAME=${dir%*/}
-
-  if [[ ! $NAME =~ ^[a-z0-9_-]+$ ]]; then
-    echo "Invalid name: $NAME"
-    exit 1
-  fi
-
   makepkg -sf --noconfirm --needed --noprogressbar || exit 1
-
-  cp *.tar.* "$output_dir/"
+  cp *.tar.* "$output_dir"
   cd -
 done
 echo "Done building packages"

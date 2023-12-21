@@ -5,8 +5,11 @@ RUN printf "[multilib]\nInclude = /etc/pacman.d/mirrorlist\n" \
         >> "$path/etc/pacman.conf" && \
     sed -i 's/^#Server/Server/' /etc/pacman.d/mirrorlist
 
+RUN pacman-key --init && \
+    pacman-key --populate
+
 # Setup build dependencies
-RUN pacman --noconfirm --noprogressbar --needed -Syyu base-devel
+RUN pacman --noconfirm --noprogressbar --needed -S base-devel
 
 # Add builder User
 RUN useradd -m -d /src -G wheel -g users builder -s /bin/bash && \
