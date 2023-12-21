@@ -18,9 +18,6 @@ RUN useradd -rm -s /bin/bash -g users -G wheel builder
 USER builder
 WORKDIR /home/builder/src
 
-COPY . .
-RUN chown -R builder:users /home/builder/src
-
 # Run entrypoint
 ENTRYPOINT ["./build-packages.sh"]
 
