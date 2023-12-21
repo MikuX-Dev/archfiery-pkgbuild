@@ -9,25 +9,6 @@
 # get hidden bugs that are hard to discover.
 set -euo pipefail
 
-# for dir in x86_64/*/; do
-#   cd "$dir"
-#   NAME=${dir%*/}
-#   curl -sSL "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=$NAME" -o ./PKGBUILD
-#   if [ -f PKGBUILD ]; then
-#     if cmp --silent -- "PKGBUILD" "./PKGBUILD"; then
-#       echo "## Checking the PKGBUILD: PKGBUILD for $NAME has not changed."
-#       makepkg -sf --noconfirm --needed --noprogressbar
-#     else
-#       echo "++ Checking the PKGBUILD: PKGBUILD for $NAME has changed."
-#       mv "./PKGBUILD" PKGBUILD
-#       makepkg -sf --noconfirm --needed --noprogressbar || echo "FAILED TO MAKE PACKAGE: $NAME"
-#     fi
-#   else
-#     echo "@@ PKGBUILD not available: $NAME is not in the AUR. Skipping!"
-#   fi
-#   cd -
-# done
-
 output_dir="output"
 
 for dir in x86_64/*/; do
@@ -48,3 +29,22 @@ for dir in x86_64/*/; do
   cd -
 done
 echo "Done building packages"
+
+# for dir in x86_64/*/; do
+#   cd "$dir"
+#   NAME=${dir%*/}
+#   curl -sSL "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=$NAME" -o ./PKGBUILD
+#   if [ -f PKGBUILD ]; then
+#     if cmp --silent -- "PKGBUILD" "./PKGBUILD"; then
+#       echo "## Checking the PKGBUILD: PKGBUILD for $NAME has not changed."
+#       makepkg -sf --noconfirm --needed --noprogressbar
+#     else
+#       echo "++ Checking the PKGBUILD: PKGBUILD for $NAME has changed."
+#       mv "./PKGBUILD" PKGBUILD
+#       makepkg -sf --noconfirm --needed --noprogressbar || echo "FAILED TO MAKE PACKAGE: $NAME"
+#     fi
+#   else
+#     echo "@@ PKGBUILD not available: $NAME is not in the AUR. Skipping!"
+#   fi
+#   cd -
+# done
