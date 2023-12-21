@@ -36,7 +36,7 @@ jobs:
         mkdir output/
 
         docker build -t archpkgb -f Dockerfile .
-        docker run -i -d --rm -v $(pwd):/src archpkgb
+        docker run --rm -v .:/src archpkgb
 
     - name: Push packages
       run: |

@@ -1,4 +1,4 @@
-FROM archlinux:latest
+FROM archlinux
 
 # Setup mirrors
 RUN printf "[multilib]\nInclude = /etc/pacman.d/mirrorlist\n" \
@@ -20,6 +20,8 @@ RUN useradd -m -d /src -G wheel -g users builder -s /bin/bash && \
 USER builder
 
 WORKDIR /src
+
+COPY --chown=builder:users . .
 
 # Run entrypoint
 ENTRYPOINT ["./build-packages.sh"]
