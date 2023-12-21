@@ -12,16 +12,15 @@ RUN pacman-key --init && \
 RUN pacman --noconfirm --noprogressbar --needed -Syy base-devel
 
 # Add builder User
-RUN useradd -m -G wheel -g users builder -s /bin/bash && \
-    echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
-    echo "root ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+RUN useradd --disabled-password -rm -d /home/builder/ -s /bin/bash -g users -G wheel builder
 
 # Change to user builder
 USER builder
+WORKDIR /home/builder/src
 
-WORKDIR /tmp
+RUN chown -R builder:users /home/builder/src
 
-COPY --chown=builder:users . .
+# COPY --chown=builder:users . .
 
 # Run entrypoint
 ENTRYPOINT ["./build-packages.sh"]
