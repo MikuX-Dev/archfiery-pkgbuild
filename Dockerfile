@@ -9,7 +9,7 @@ RUN pacman-key --init && \
     pacman-key --populate
 
 # Setup build dependencies
-RUN pacman --noconfirm --noprogressbar --needed -S base-devel
+RUN pacman --noconfirm --noprogressbar --needed -Syy base-devel
 
 # Add builder User
 RUN useradd -m -d /src -G wheel -g users builder -s /bin/bash && \
