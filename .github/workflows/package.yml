@@ -37,14 +37,14 @@ jobs:
 
     - name: Build packages
       run: |
-        # su - builder
-
         pacman-key --init && pacman-key --populate
         pacman --noconfirm --noprogressbar --needed -Syy
 
-        su -c "chown -R builder:builder .*" builder
-        su -c "chmod 755 build-packages.sh" builder
-        su -c "./build-packages.sh" builder
+        su -l builder
+
+        chown -R builder:builder .*
+        chmod 755 build-packages.sh
+        ./build-packages.sh
 
         # for dir in x86_64/*/; do
         #   cd "$dir"
