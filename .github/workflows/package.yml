@@ -37,16 +37,19 @@ jobs:
 
     - name: Build packages
       run: |
-        su builder
+        # su - builder
 
-        sudo pacman-key --init && sudo pacman-key --populate
-        sudo pacman --noconfirm --noprogressbar --needed -Syy
+        pacman-key --init && pacman-key --populate
+        pacman --noconfirm --noprogressbar --needed -Syy
 
-        for dir in x86_64/*/; do
-          cd "$dir"
-            makepkg -sf --noconfirm --needed --noprogressbar
-          cd -
-        done
+        su -c chmod 755 build-packages.sh builder
+        su -c ./build-packages.sh builder
+
+        # for dir in x86_64/*/; do
+        #   cd "$dir"
+        #     makepkg -sf --noconfirm --needed --noprogressbar
+        #   cd -
+        # done
 
     - name: Push packages
       run: |
