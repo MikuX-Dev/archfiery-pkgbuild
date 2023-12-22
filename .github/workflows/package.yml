@@ -18,10 +18,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Install pkgs
-      run:  |
-        apt update && apt install docker.io
-
     - name: Import SSH key
       run: |
         mkdir ~/.ssh/
