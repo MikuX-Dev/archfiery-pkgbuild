@@ -37,7 +37,7 @@ jobs:
 
     - name: Build packages
       run: |
-        su builder --noconfirm
+        su builder
 
         sudo pacman-key --init && sudo pacman-key --populate
         sudo pacman --noconfirm --noprogressbar --needed -Syy
