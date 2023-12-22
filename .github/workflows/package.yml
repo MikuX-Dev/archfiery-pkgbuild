@@ -1,6 +1,6 @@
 # .github/workflows/package.yml
 
-name: Build Package 
+name: Build Package
 
 on:
   push:
@@ -18,7 +18,11 @@ jobs:
       image: mikuxdev/archiso:latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
+
+    - name: Grant permissions for builder
+      run: |
+        chmod u+w .*
 
     - name: Import SSH key
       run: |
@@ -28,6 +32,8 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa.pub
         ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+        chmod u+w .*
 
     - name: Build packages
       run: |
