@@ -41,6 +41,8 @@ jobs:
         useradd -r -m -s /bin/bash -G wheel user && \
         sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' /etc/sudoers
 
+        su user
+
         chown -R user:user /home/user/
 
         chown -R user:user *
