@@ -43,8 +43,8 @@ jobs:
         pacman --noconfirm --noprogressbar --needed -Syy
 
         su -c "chown -R builder .*" builder
-        su -c chmod +x build-packages.sh builder
-        su -c ./build-packages.sh builder
+        su -c "chmod +x build-packages.sh" builder
+        su -c "./build-packages.sh" builder
 
         # for dir in x86_64/*/; do
         #   cd "$dir"
