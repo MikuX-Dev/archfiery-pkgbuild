@@ -18,9 +18,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    # - name: Install pkgs
-    #   run:  |
-    #     apt update && apt install docker.io docker-compose
+    - name: Install pkgs
+      run:  |
+        apt update && apt install docker.io
 
     - name: Import SSH key
       run: |
@@ -34,14 +34,13 @@ jobs:
     - name: Build packages
       run: |
         mkdir output/
+	ls -al
 
         output_dir="output/"
 
         for dir in x86_64/*/; do
-          cd "$dir"
-            docker build -t archpkgb -f docker/Dockerfile .
-            docker run --rm archpkgb
-          cd -
+          docker build -t archpkgb -f docker/Dockerfile "$dir"
+          docker run --rm archpkgb
         done
 
     - name: Push packages
