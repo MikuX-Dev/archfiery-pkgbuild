@@ -34,8 +34,8 @@ jobs:
         output_dir="output/"
 
         for dir in x86_64/*/; do
-          docker build -t archpkgb -f docker/Dockerfile "$dir"
-          docker run --rm archpkgb
+          docker build -t archpkgb -f docker/Dockerfile .
+          docker run --rm archpkgb "$dir"
         done
 
     - name: Push packages
