@@ -18,7 +18,7 @@ jobs:
       image: mikuxdev/archiso:latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v2
 
     - name: Import SSH key
       run: |
