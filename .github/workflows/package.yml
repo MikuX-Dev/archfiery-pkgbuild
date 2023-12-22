@@ -35,15 +35,24 @@ jobs:
       run: |
         mkdir output/
 
-        docker build -t archpkgb -f Dockerfile .
-        docker run --rm -v $pwd:/home/builder/ archpkgb
+        output_dir="output/"
+
+        for dir in x86_64/*/; do
+          cd "$dir"
+            docker build -t archpkgb -f Dockerfile .
+            docker run --rm archpkgb
+          cd -
+        done
 
     - name: Push packages
       run: |
-        git clone git@github.com:MikuX-Dev/archfiery-repo.git out/
+        git clone git@github.com:MikuX-Dev/archfiery-repo.git
 
-        cp -r output/* out/x86_64/
-        cd out/
+        for dir in x86_64/*/; do
+          cp -r "$dir"/*.tar.* archfiery-repo/x86_64/
+        done
+
+        cd archfiery-repo/
 
         git config user.name "GitHub Actions Bot"
         git config user.email "actions@github.com"

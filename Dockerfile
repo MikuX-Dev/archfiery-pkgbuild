@@ -12,9 +12,9 @@ RUN sudo pacman --noconfirm --noprogressbar --needed -Syy base-devel
 # # Change to user builder
 # USER builder
 # COPY . .
-# WORKDIR /home/builder/src
+WORKDIR /home/builder/src
 
 # Run entrypoint
-ENTRYPOINT ["./build-packages.sh"]
+ENTRYPOINT [ "makepkg" ]
 
-CMD [ "./build-packages.sh" ]
+CMD [ "-s" "-f" "--noconfirm" "--needed" "--noprogressbar" ]
