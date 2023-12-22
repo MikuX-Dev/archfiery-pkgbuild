@@ -22,7 +22,7 @@ jobs:
 
     - name: Grant permissions for builder
       run: |
-        chmod u+w .*
+        chown -R builder .*
 
     - name: Import SSH key
       run: |
@@ -37,7 +37,7 @@ jobs:
 
     - name: Build packages
       run: |
-        su -u builder
+        su builder --noconfirm
 
         sudo pacman-key --init && sudo pacman-key --populate
         sudo pacman --noconfirm --noprogressbar --needed -Syy
