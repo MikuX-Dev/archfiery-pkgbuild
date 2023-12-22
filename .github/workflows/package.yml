@@ -36,7 +36,9 @@ jobs:
         docker build -t archpkgb -f docker/Dockerfile .
 
         for dir in x86_64/*/; do
-          docker run --rm -v "$dir":/home/builder/src  archpkgb
+          cleaned_dir=$(echo "$dir" | tr -c '[:alnum:]._-' '-')
+          cleaned_dir=${cleaned_dir%/}
+          docker run --rm -v "$cleaned_dir":/home/builder/src archpkgb
         done
 
     - name: Push packages
