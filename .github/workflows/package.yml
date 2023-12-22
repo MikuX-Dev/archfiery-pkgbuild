@@ -20,10 +20,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Grant permissions for builder
-      run: |
-        chown -R builder .*
-
     - name: Import SSH key
       run: |
         mkdir ~/.ssh/
@@ -32,8 +28,6 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa.pub
         ssh-keyscan github.com >> ~/.ssh/known_hosts
-
-        chmod u+w .*
 
     - name: Build packages
       run: |
