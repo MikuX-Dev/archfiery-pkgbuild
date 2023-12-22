@@ -34,7 +34,6 @@ jobs:
     - name: Build packages
       run: |
         mkdir output/
-	      ls -al
 
         output_dir="output/"
 
