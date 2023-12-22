@@ -14,6 +14,8 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    container:
+      image: mikuxdev/archiso:latest
 
     steps:
     - uses: actions/checkout@v3
@@ -29,16 +31,13 @@ jobs:
 
     - name: Build packages
       run: |
-        mkdir output/
-
-        output_dir="output/"
-
-        docker build -t archpkgb -f docker/Dockerfile .
+        sudo pacman-key --init && sudo pacman-key --populate
+        sudo pacman --noconfirm --noprogressbar --needed -Syy
 
         for dir in x86_64/*/; do
-          cleaned_dir=$(echo "$dir" | tr -c '[:alnum:]._-' '-')
-          cleaned_dir=${cleaned_dir%/}
-          docker run --rm -v "$cleaned_dir":/home/builder/src archpkgb
+          cd "$dir"
+            makepkg -sf --noconfirm --needed --noprogressbar
+          cd -
         done
 
     - name: Push packages
