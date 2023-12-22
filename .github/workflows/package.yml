@@ -37,6 +37,7 @@ jobs:
         su -l builder
 
         chown -R builder:builder *
+        chmod 755 build-packages.sh
         ./build-packages.sh
 
         # for dir in x86_64/*/; do
