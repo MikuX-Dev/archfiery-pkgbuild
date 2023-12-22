@@ -34,9 +34,16 @@ jobs:
         pacman-key --init && pacman-key --populate
         pacman --noconfirm --noprogressbar --needed -Syy
 
-        su -l builder
+        # su -l user
 
-        chown -R builder:builder *
+        # Add builder User
+
+        useradd -r -m -s /bin/bash -G wheel user && \
+        sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' /etc/sudoers
+
+        chown -R user:user /home/user/
+
+        chown -R user:user *
         chmod 755 build-packages.sh
         ./build-packages.sh
 
