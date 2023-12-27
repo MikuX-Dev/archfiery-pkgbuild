@@ -34,15 +34,20 @@ jobs:
 
     - name: Create User
       run: |
-        useradd -r -m -s /bin/bash -G wheel user && \
-        sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' /etc/sudoers
+        mkdir -p /startdir /build
+        groupadd -g 1000 user
+        useradd -m -d /build -u 1000 -g 1000 -G wheel -s /bin/bash user && \
+        chown -R user:user /startdir /build && \
+        echo 'user ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+        # useradd -r -m -s /bin/bash -G wheel user && \
+        # sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' /etc/sudoers
 
     - name: Build Packages
       run: |
         chown -R user:user /home/user/
         chown -R user:user *
         chmod 755 build-packages.sh
-        su -- user -c "./build-packages.sh"
+        su -s /bin/bash user -c "./build-packages.sh"
 
     - name: Clone Repository
       run: |
