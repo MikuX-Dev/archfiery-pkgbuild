@@ -44,7 +44,6 @@ jobs:
 
     - name: Build Packages
       run: |
-        chown -R user:user /home/user/
         chown -R user:user *
         chmod 755 build-packages.sh
         su -s /bin/bash user -c "./build-packages.sh"
