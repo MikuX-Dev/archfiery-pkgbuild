@@ -1,5 +1,3 @@
-# .github/workflows/package.yml
-
 name: Build Package
 
 on:
@@ -11,62 +9,57 @@ on:
     - cron: "0 8 */4 * *"  # Every 4 days
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
     container:
-      image: mikuxdev/archiso:latest
+      image: archlinux
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Install Dependencies
+      run: |
+        pacman-key --init && pacman-key --populate
+        pacman --noconfirm --noprogressbar --needed -Syy make openssh
 
     - name: Import SSH key
       run: |
-        mkdir ~/.ssh/
+        mkdir -p ~/.ssh/
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         echo "${{ secrets.SSH_PRIVATE_KEY_PUB }}" > ~/.ssh/id_rsa.pub
         chmod 600 ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa.pub
         ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-    - name: Build packages
+    - name: Create User
       run: |
-        pacman-key --init && pacman-key --populate
-        pacman --noconfirm --noprogressbar --needed -Syy
-
-        # su -l user
-
-        # Add builder User
-
         useradd -r -m -s /bin/bash -G wheel user && \
         sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' /etc/sudoers
 
-        su user
-
+    - name: Build Packages
+      run: |
         chown -R user:user /home/user/
-
         chown -R user:user *
         chmod 755 build-packages.sh
-        ./build-packages.sh
+        su -- user -c "./build-packages.sh"
 
-        # for dir in x86_64/*/; do
-        #   cd "$dir"
-        #     makepkg -sf --noconfirm --needed --noprogressbar
-        #   cd -
-        # done
-
-    - name: Push packages
+    - name: Clone Repository
       run: |
         git clone git@github.com:MikuX-Dev/archfiery-repo.git
 
+    - name: Copy Packages to Repository
+      run: |
+        # cp -r x86_64/* archfiery-repo/x86_64/
         for dir in x86_64/*/; do
           cp -r "$dir"/*.tar.* archfiery-repo/x86_64/
         done
 
-        cd archfiery-repo/
-
-        git config user.name "GitHub Actions Bot"
-        git config user.email "actions@github.com"
+    - name: Commit and Push Changes
+      run: |
+        cd archfiery-repo
+        git config --local user.email "actions@github.com"
+        git config --local user.name "GitHub Actions"
         git add .
-        git commit -m "Add packages built from ${GITHUB_REF##*/}"
+        git commit -m "Add built packages"
         git push
