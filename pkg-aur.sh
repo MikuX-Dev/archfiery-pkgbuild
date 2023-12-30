@@ -13,7 +13,7 @@ set -euo pipefail
 NAME=("btrfs-assistant" "snapper-gui-git" "mkinitcpio-firmware" "firmware-manager" "pikaur" "yay-bin")
 
 # Set the workspace directory
-WORKSPACE_DIR="$GITHUB_WORKSPACE"
+WORKSPACE_DIR=${GITHUB_WORKSPACE:-$(pwd)}
 
 # Create a folder for each package and download PKGBUILD
 for pkg in "${NAME[@]}"; do
