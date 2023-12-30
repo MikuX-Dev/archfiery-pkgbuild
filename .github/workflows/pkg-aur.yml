@@ -39,10 +39,7 @@ jobs:
 
     - name: Copy Packages to Repository
       run: |
-        # cp -r x86_64/* archfiery-repo/x86_64/
-        for dir in x86_64/*/; do
-          cp -r "$dir"/*.tar.* archfiery-repo/x86_64/
-        done
+        cp -r output/* archfiery-repo/x86_64/
 
     - name: Commit and Push Changes
       run: |

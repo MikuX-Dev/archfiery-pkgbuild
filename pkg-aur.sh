@@ -9,15 +9,24 @@
 # get hidden bugs that are hard to discover.
 set -euo pipefail
 
-for dir in x86_64/*/; do
-  cd "$dir"
-  # mkarchroot -c -r $CHROOT
-  makepkg -csf --noconfirm --needed --noprogressbar || exit 1
-  cd -
+mkdir output/
+
+# Define the package names
+NAME=("btrfs-assistant" "snapper-gui-git" "mkinitcpio-firmware" "firmware-manager" "pikaur" "yay-bin")
+
+# Create a folder for each package and download PKGBUILD
+for pkg in "${NAME[@]}"; do
+  mkdir -p "$pkg"
+  curl -sSL "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=$pkg" -o "$pkg/PKGBUILD"
 done
 
-for dir in x86_64/*/; do
-  cp -r "$dir"/*.tar.* archfiery-repo/x86_64/
+# Build and package each package
+for pkg in "${NAME[@]}"; do
+  cd "$pkg" || exit 1
+  makepkg -csf --noconfirm --needed --noprogressbar
+  cp ./*.pkg.tar.* ../output/ # Assuming output is a folder in the same directory as this script
+  cd ..
 done
 
+echo "Packages built and copied to output folder."
 echo "Done building packages"
