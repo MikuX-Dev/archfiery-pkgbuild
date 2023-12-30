@@ -12,7 +12,7 @@ set -euo pipefail
 sudo chown -R builder:builder .*
 
 # Define the package names
-NAME=("btrfs-assistant" "snapper-gui-git" "mkinitcpio-firmware" "firmware-manager" "pikaur" "yay-bin")
+NAME=("snapper-gui-git" "mkinitcpio-firmware" "firmware-manager" "pikaur" "yay-bin")
 
 # Create a folder for each package and download PKGBUILD
 for pkg in "${NAME[@]}"; do
