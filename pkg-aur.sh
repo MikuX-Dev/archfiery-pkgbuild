@@ -9,7 +9,7 @@
 # get hidden bugs that are hard to discover.
 set -euo pipefail
 
-mkdir output/
+sudo chown -R builder:builder .*
 
 # Define the package names
 NAME=("btrfs-assistant" "snapper-gui-git" "mkinitcpio-firmware" "firmware-manager" "pikaur" "yay-bin")
