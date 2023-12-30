@@ -30,6 +30,7 @@ jobs:
         image: mikuxdev/pkg-aur:latest
         options: -v ${{ github.workspace }}:/home/builder
         run: |
+          sudo pacman -Syu git
           echo "Running script"
           sudo chown -R builder:builder .*
           sudo chmod +x pkg-aur.sh && ./pkg-aur.sh

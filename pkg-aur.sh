@@ -14,7 +14,9 @@ NAME=("btrfs-assistant" "snapper-gui-git" "mkinitcpio-firmware" "firmware-manage
 
 # Create a folder for each package and download PKGBUILD
 for pkg in "${NAME[@]}"; do
-  git clone https://aur.archlinux.org/"$pkg".git
+  mkdir -p "$pkg"
+  sudo chown -R builder:builder "$pkg"
+  git clone https://aur.archlinux.org/"$pkg".git "$pkg"
 done
 
 # fix directory permissions
