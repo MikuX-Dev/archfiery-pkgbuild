@@ -27,7 +27,7 @@ jobs:
 
     - name: Build Packages
       run: |
-        docker run --rm -v pwd:/home/builder mikuxdev/pkg-local:latest
+      docker run --rm -v ${{ github.workspace }}:/home/builder mikuxdev/pkg-local:latest
 
     - name: Clone Repository
       run: |
