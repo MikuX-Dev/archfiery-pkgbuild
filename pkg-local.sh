@@ -9,9 +9,16 @@
 # get hidden bugs that are hard to discover.
 set -euo pipefail
 
+# CHROOT=/build-chroot
+# echo "$CHROOT is archlinux pkg build folder!"
+# sleep 5s
+# mkarchroot $CHROOT/root base-devel devtools
+# arch-nspawn $CHROOT/root pacman -Syu
+
 for dir in x86_64/*/; do
   cd "$dir"
-  makepkg -sf --noconfirm --needed --noprogressbar || exit 1
+  # mkarchroot -c -r $CHROOT
+  makepkg -csf --noconfirm --needed --noprogressbar || exit 1
   cd -
 done
 

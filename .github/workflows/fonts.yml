@@ -1,0 +1,59 @@
+name: fonts
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  schedule:
+    - cron: "0 8 */4 * *"  # Every 4 days
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Import SSH key
+      run: |
+        mkdir -p ~/.ssh/
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        echo "${{ secrets.SSH_PRIVATE_KEY_PUB }}" > ~/.ssh/id_rsa.pub
+        chmod 600 ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa.pub
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+    - name: Download font
+      run: |
+        fonts_url="https://github.com/ryanoasis/nerd-fonts/releases/latest"
+        download_dir="./fonts"  # Change this to your desired download directory
+
+        # Ensure the download directory exists
+        mkdir -p "$download_dir"
+
+        # Download all *.tar.xz files from the fonts_url into the specified directory
+        curl -sL "$fonts_url" | grep -o -E "https://.*\.tar\.xz" | while read -r font_url; do
+          filename=$(basename "$font_url")
+          curl -L -o "$download_dir/$filename" "$font_url"
+        done
+
+    - name: Clone Repository
+      run: |
+        git clone git@github.com:MikuX-Dev/archfiery-repo.git
+
+    - name: Copy Fonts to Repository
+      run: |
+        cp -r ./fonts/* archfiery-repo/x86_64/
+
+    - name: Commit and Push Changes
+      run: |
+        cd archfiery-repo
+        git config --local user.email "actions@github.com"
+        git config --local user.name "GitHub Actions"
+        git add .
+        git commit -m "Add built packages"
+        git push
