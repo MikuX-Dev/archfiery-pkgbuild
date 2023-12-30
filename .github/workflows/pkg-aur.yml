@@ -25,9 +25,13 @@ jobs:
         chmod 600 ~/.ssh/id_rsa.pub
         ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-    - name: Build Packages
-      run: |
-      docker run --rm -v ${{ github.workspace }}:/home/builder mikuxdev/pkg-aur:latest
+    - uses: addnab/docker-run-action@v3
+      with:
+        image: mikuxdev/pkg-aur:latest
+        options: -v ${{ github.workspace }}:/home/builder
+        run: |
+          echo "Running script"
+          chmod +x pkg-aur.sh && ./pkg-aur.sh
 
     - name: Clone Repository
       run: |
