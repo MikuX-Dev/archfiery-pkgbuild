@@ -27,7 +27,8 @@ jobs:
 
     - name: Run docker and build pkg
       run: |
-          docker run --rm -v ${{ github.workspace }}:/home/builder mikuxdev/pkg-aur:latest
+          docker build -t buildpkgb mikuxdev/pkg-aur:latest
+          docker run --rm -v ${{ github.workspace }}:/home/builder buildpkgb
           echo "Running script"
           sudo chown -R builder:builder /home/builder
           sudo chmod +x pkg-aur.sh && ./pkg-aur.sh
