@@ -31,7 +31,7 @@ jobs:
         options: -v ${{ github.workspace }}:/home/builder
         run: |
           echo "Running script"
-          chmod +x pkg-local.sh && ./pkg-local.sh
+          sudo chmod +x pkg-local.sh && ./pkg-local.sh
 
     - name: Clone Repository
       run: |
