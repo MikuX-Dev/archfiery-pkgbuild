@@ -28,7 +28,7 @@ jobs:
     - name: build docker and run
       run: |
         docker build -t pkgb .
-        docker run -d -v pwd:/home/builder/:rw pkgb
+        docker run --rm --mount type=bind,src=/home/runner/work/archfiery-pkgbuild/archfiery-pkgbuild,target=/home/builder pkgb
 
     - name: Clone Repo and copy pkg and Commit and Push Changes
       run: |
