@@ -37,7 +37,6 @@ RUN \
 
 RUN sudo pacman -Scc --noconfirm
 
-RUN sudo chown -R builder:builder *
 RUN sudo sed -i '/E_ROOT/d' /usr/bin/makepkg
 
 COPY pkg-aur.sh /home/builder/pkg-aur.sh
