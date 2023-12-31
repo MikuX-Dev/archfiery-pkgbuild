@@ -11,6 +11,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: archlinux:base-devel
 
     steps:
     - name: Checkout Repository
@@ -18,21 +20,22 @@ jobs:
 
     - name: Import SSH key
       run: |
-        mkdir -p ~/.ssh ~/output
+        mkdir -p ~/.ssh ~/output /tmp/pkg-build
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         echo "${{ secrets.SSH_PRIVATE_KEY_PUB }}" > ~/.ssh/id_rsa.pub
         chmod 600 ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa.pub
         ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-    - uses: addnab/docker-run-action@v3
-      with:
-        image: mikuxdev/pkg-aur:latest
-        options: -v ${{ github.workspace }}:/home/builder:rw
-        shell: bash
-        run: |
+    # - uses: addnab/docker-run-action@v3
+    #   with:
+    #     image: mikuxdev/pkg-aur:latest
+    #     options: -v ${{ github.workspace }}:/home/builder:rw
+    #     shell: bash
+    #     run: |
+    - name: Build pkg
+      run: |
           ls -la /home/builder
-          echo "::Running Script::"
           pwd
           find .
           sudo chown -R builder:builder .*
@@ -46,10 +49,10 @@ jobs:
           packages=("btrfs-assistant" "snapper-gui-git" "mkinitcpio-firmware" "firmware-manager" "pikaur" "yay-bin")
 
           for package in "${packages[@]}"; do
-            git clone https://aur.archlinux.org/"$package".git /tmp/"$package"
-            cd /tmp/"$package" || exit
+            git clone https://aur.archlinux.org/"$package".git /tmp/pkg-build/"$package"
+            cd /tmp/pkg-build/"$package" || exit
             makepkg -csf --noconfirm --needed --noprogressbar
-            cp -r /tmp/"$package"/*.pkg.* ../output
+            cp -r /tmp/pkg-build/"$package"/*.pkg.* ../output
             cd ..
           done
 

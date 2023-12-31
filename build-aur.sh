@@ -9,11 +9,6 @@
 # get hidden bugs that are hard to discover.
 set -euo pipefail
 
-# chown user
-if [ -d "/github" ]; then
-  sudo chown -R builder:builder /github/workspace /github/home
-fi
-
 packages=("btrfs-assistant" "snapper-gui-git" "mkinitcpio-firmware" "firmware-manager" "pikaur" "yay-bin") # Add your package names here
 
 # Loop through the packages, clone, build, and copy
