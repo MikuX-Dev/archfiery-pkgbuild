@@ -29,7 +29,7 @@ mkdir -p "output"
 for pkg in "${NAME[@]}"; do
   cd "$pkg" || exit 1
   makepkg -csf --noconfirm --needed --noprogressbar
-  cp -r ./*.pkg.tar.* "output/" # Assuming output is a folder in the same directory as this script
+  cp -r ./*.pkg.tar.* output/ # Assuming output is a folder in the same directory as this script
 done
 
 echo "Packages built and copied to the output folder."

@@ -17,6 +17,9 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
+      with:
+        repository: MikuX-Dev/archfiery-pkgbuild
+        path: /home/builder/archfiery-pkgbuild
 
     - name: Import SSH key
       run: |
