@@ -29,7 +29,9 @@ jobs:
       with:
         image: mikuxdev/pkg-aur:latest
         options: -v ${{ github.workspace }}:/home/builder:rw
+        shell: bash
         run: |
+          ls -la /home/builder
           echo "::Running Script::"
           pwd
           find .
