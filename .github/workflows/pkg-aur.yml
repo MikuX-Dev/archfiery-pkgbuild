@@ -52,17 +52,19 @@ jobs:
     #     run: |
     - name: Build pkg
       run: |
+        sudo -u builder bash -c '
         cd /home/builder
         ls -la /home/builder
         pwd
         find .
-        sudo -u builder bash -c 'cp -r ${{ github.workspace }}/.* /home/builder'
-        sudo -u builder bash -c 'chown -R builder:builder .*'
-        sudo -u builder bash -c 'chmod +x pkg-aur.sh'
-        sudo -u builder bash -c 'chown -R builder:builder .*'
+        git clone git@github.com:MikuX-Dev/archfiery-pkgbuild.git
+        chown -R builder:builder .*
+        cd archfiery-pkgbuild/
+        chmod +x pkg-aur.sh
+        chown -R builder:builder .*
 
         if [ -d "/github" ]; then
-        sudo -u builder bash -c 'chown -R builder:builder /github/workspace /github/home'
+          chown -R builder:builder /github/workspace /github/home
         fi
 
         packages=("btrfs-assistant" "snapper-gui-git" "mkinitcpio-firmware" "firmware-manager" "pikaur" "yay-bin")
@@ -74,14 +76,18 @@ jobs:
           cp -r /tmp/pkg-build/"$package"/*.pkg.* /tmp/output
           cd ..
         done
+        '
 
     - name: Clone Repo and copy pkg and Commit and Push Changes
       run: |
-        git clone git@github.com:MikuX-Dev/archfiery-repo.git /home/builder/archfiery-repo
-        cp -r /tmp/output/* /home/builder/archfiery-repo/x86_64/
-        cd /home/builder/archfiery-repo/
+        cd /home/builder
+        sudo -u builder bash -c '
+        git clone git@github.com:MikuX-Dev/archfiery-repo.git
+        cd archfiery-repo/
+        cp -r /tmp/output/* x86_64/
         git config --local user.email "actions@github.com"
         git config --local user.name "GitHub Actions"
         git add .
         git commit -m "Add built packages"
         git push
+        '
