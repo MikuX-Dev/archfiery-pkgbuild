@@ -60,7 +60,7 @@ jobs:
         git clone git@github.com:MikuX-Dev/archfiery-pkgbuild.git
         chown -R builder:builder .*
         cd archfiery-pkgbuild/
-        chmod +x pkg-aur.sh
+        chmod +x *.sh
         chown -R builder:builder .*
 
         if [ -d "/github" ]; then
@@ -74,7 +74,7 @@ jobs:
           cd /tmp/pkg-build/"$package" || exit
           makepkg -csf --noconfirm --needed --noprogressbar
           cp -r /tmp/pkg-build/"$package"/*.pkg.* /tmp/output
-          cd ..
+          cd -
         done
         '
 
