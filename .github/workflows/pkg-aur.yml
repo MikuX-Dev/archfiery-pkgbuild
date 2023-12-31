@@ -28,7 +28,7 @@ jobs:
     - name: build docker and run
       run: |
         docker build -t pkgb .
-        docker run --rm -v /home/runner/work/archfiery-pkgbuild/archfiery-pkgbuild:/build pkgb
+        docker run --rm -v /home/runner/work/archfiery-pkgbuild/archfiery-pkgbuild:/home/builder pkgb
         echo "Running script"
         sudo chown -R builder:builder .*
         sudo chmod +x pkg-aur.sh && ./pkg-aur.sh
