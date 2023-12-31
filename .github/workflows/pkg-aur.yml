@@ -35,12 +35,14 @@ jobs:
     - name: Import SSH key
       run: |
         cd /home/builder
+        sudo -u builder bash -c '
         mkdir -p .ssh /tmp/pkg-build /tmp/output
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > .ssh/id_rsa
         echo "${{ secrets.SSH_PRIVATE_KEY_PUB }}" > .ssh/id_rsa.pub
         chmod 600 .ssh/id_rsa
         chmod 600 .ssh/id_rsa.pub
         ssh-keyscan github.com >> .ssh/known_hosts
+        '
 
     # - uses: addnab/docker-run-action@v3
     #   with:
