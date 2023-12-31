@@ -33,6 +33,7 @@ jobs:
           echo "::Running Script::"
           pwd
           find .
+          sudo chown -R builder:builder .*
           chmod +x pkg-aur.sh
           ./pkg-aur.sh
 
