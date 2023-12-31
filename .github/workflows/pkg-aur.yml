@@ -34,12 +34,13 @@ jobs:
 
     - name: Import SSH key
       run: |
-        mkdir -p ~/.ssh ~/output /tmp/pkg-build /tmp/output
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        echo "${{ secrets.SSH_PRIVATE_KEY_PUB }}" > ~/.ssh/id_rsa.pub
-        chmod 600 ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa.pub
-        ssh-keyscan github.com >> ~/.ssh/known_hosts
+        cd /home/builder
+        mkdir -p .ssh /tmp/pkg-build /tmp/output
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > .ssh/id_rsa
+        echo "${{ secrets.SSH_PRIVATE_KEY_PUB }}" > .ssh/id_rsa.pub
+        chmod 600 .ssh/id_rsa
+        chmod 600 .ssh/id_rsa.pub
+        ssh-keyscan github.com >> .ssh/known_hosts
 
     # - uses: addnab/docker-run-action@v3
     #   with:
@@ -49,32 +50,33 @@ jobs:
     #     run: |
     - name: Build pkg
       run: |
-          ls -la /home/builder
-          pwd
-          find .
-          sudo chown -R builder:builder .*
-          sudo chmod +x pkg-aur.sh
-          sudo chown -R builder:builder .*
+        cd /home/builder
+        ls -la /home/builder
+        pwd
+        find .
+        sudo -u builder bash -c 'chown -R builder:builder .*'
+        sudo -u builder bash -c 'chmod +x pkg-aur.sh'
+        sudo -u builder bash -c 'chown -R builder:builder .*'
 
-          if [ -d "/github" ]; then
-            sudo chown -R builder:builder /github/workspace /github/home
-          fi
+        if [ -d "/github" ]; then
+        sudo -u builder bash -c 'chown -R builder:builder /github/workspace /github/home'
+        fi
 
-          packages=("btrfs-assistant" "snapper-gui-git" "mkinitcpio-firmware" "firmware-manager" "pikaur" "yay-bin")
+        packages=("btrfs-assistant" "snapper-gui-git" "mkinitcpio-firmware" "firmware-manager" "pikaur" "yay-bin")
 
-          for package in "${packages[@]}"; do
-            git clone https://aur.archlinux.org/"$package".git /tmp/pkg-build/"$package"
-            cd /tmp/pkg-build/"$package" || exit
-            makepkg -csf --noconfirm --needed --noprogressbar
-            cp -r /tmp/pkg-build/"$package"/*.pkg.* /tmp/output
-            cd ..
-          done
+        for package in "${packages[@]}"; do
+          git clone https://aur.archlinux.org/"$package".git /tmp/pkg-build/"$package"
+          cd /tmp/pkg-build/"$package" || exit
+          makepkg -csf --noconfirm --needed --noprogressbar
+          cp -r /tmp/pkg-build/"$package"/*.pkg.* /tmp/output
+          cd ..
+        done
 
     - name: Clone Repo and copy pkg and Commit and Push Changes
       run: |
-        git clone git@github.com:MikuX-Dev/archfiery-repo.git
-        cp -r /tmp/output/* archfiery-repo/x86_64/
-        cd archfiery-repo
+        git clone git@github.com:MikuX-Dev/archfiery-repo.git /home/builder/archfiery-repo
+        cp -r /tmp/output/* /home/builder/archfiery-repo/x86_64/
+        cd /home/builder/archfiery-repo/
         git config --local user.email "actions@github.com"
         git config --local user.name "GitHub Actions"
         git add .
