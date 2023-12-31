@@ -36,7 +36,20 @@ jobs:
           sudo chown -R builder:builder .*
           sudo chmod +x pkg-aur.sh
           sudo chown -R builder:builder .*
-          ./pkg-aur.sh
+
+          if [ -d "/github" ]; then
+            sudo chown -R builder:builder /github/workspace /github/home
+          fi
+
+          packages=("btrfs-assistant" "snapper-gui-git" "mkinitcpio-firmware" "firmware-manager" "pikaur" "yay-bin")
+
+          for package in "${packages[@]}"; do
+            git clone https://aur.archlinux.org/"$package".git
+            cd "$package" || exit
+            makepkg -csf --noconfirm --needed --noprogressbar
+            cp -r ./*.pkg.* ../output
+            cd ..
+          done
 
     - name: Clone Repo and copy pkg and Commit and Push Changes
       run: |
