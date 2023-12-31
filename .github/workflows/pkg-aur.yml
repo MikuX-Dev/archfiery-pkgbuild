@@ -3,8 +3,6 @@ name: pkg-aur
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
   schedule:
     - cron: "0 8 */4 * *"  # Every 4 days
 
@@ -83,8 +81,17 @@ jobs:
         cd /home/builder
         sudo -u builder bash -c '
         git clone git@github.com:MikuX-Dev/archfiery-repo.git
-        cd archfiery-repo/
-        cp -r /tmp/output/* x86_64/
+        cd archfiery-repo/x86_64/
+        
+        packages=("btrfs-assistant" "snapper-gui-git" "mkinitcpio-firmware" "firmware-manager" "pikaur" "yay-bin")
+        for package in "${packages[@]}"; do
+          rm -rf ./*"$package"*pkg.tar.*
+        done
+        
+        cp -r /tmp/output/* ./
+        chmod +x ./update-db.sh
+        ./update-db.sh 
+        cd ..
         git config --local user.email "actions@github.com"
         git config --local user.name "GitHub Actions"
         git add .
