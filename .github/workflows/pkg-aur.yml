@@ -27,11 +27,11 @@ jobs:
 
     - name: build docker and run
       run: |
-          docker build -t pkgb Dockerfile .
-          docker run --rm -v ${{ github.workspace }}:/home/builder:rw pkgb
-          echo "Running script"
-          sudo chown -R builder:builder .*
-          sudo chmod +x pkg-aur.sh && ./pkg-aur.sh
+        docker build -t pkgb .
+        docker run --rm -v /home/runner/work/archfiery-pkgbuild/archfiery-pkgbuild:/build pkgb
+        echo "Running script"
+        sudo chown -R builder:builder .*
+        sudo chmod +x pkg-aur.sh && ./pkg-aur.sh
 
     - name: Clone Repository
       run: |
