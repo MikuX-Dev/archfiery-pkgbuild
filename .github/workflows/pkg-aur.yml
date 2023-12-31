@@ -56,6 +56,7 @@ jobs:
         ls -la /home/builder
         pwd
         find .
+        sudo -u builder bash -c 'cp -r ${{ github.workspace }}/.* /home/builder'
         sudo -u builder bash -c 'chown -R builder:builder .*'
         sudo -u builder bash -c 'chmod +x pkg-aur.sh'
         sudo -u builder bash -c 'chown -R builder:builder .*'
