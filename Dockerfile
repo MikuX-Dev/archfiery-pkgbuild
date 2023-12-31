@@ -7,7 +7,7 @@ RUN sudo pacman -Syy
 # COPY pkg-aur.sh /home/builder/pkg-aur.sh
 
 RUN sudo chown -R builder:builder /home/builder/
-RUN chmod +x /home/builder/pkg-aur.sh
+RUN chmod +x pkg-aur.sh
 RUN sudo chown -R builder:builder /home/builder/
 
 ENTRYPOINT ["./pkg-aur.sh"]
