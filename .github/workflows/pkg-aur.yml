@@ -28,7 +28,7 @@ jobs:
     - uses: addnab/docker-run-action@v3
       with:
         image: mikuxdev/pkg-aur:latest
-        options: --rm --mount type=bind,source=${{ github.workspace }}:/home/builder
+        options: --rm -v ${{ github.workspace }}:/home/builder:rw
         run: |
           echo "Running script"
           sudo chown -R builder:builder .*
