@@ -23,32 +23,33 @@ RUN pacman -Syyu --noconfirm --quiet --needed reflector rsync curl wget base-dev
     pacman -Syy
 
 # Add builder User
-RUN groupadd --gid 2000 builder && \
-    useradd -m -s /bin/bash --uid 2000 --gid 2000 -G wheel builder && \
+RUN useradd -d /huser -s /bin/bash -G wheel builder && \
     sed -i 's/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers && \
     echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 # chown user
-RUN chown -R builder:builder /home/builder/
+RUN chown -R builder:builder /huser/
 
 USER builder
-WORKDIR /home/builder
+WORKDIR /huser
 
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/bin/core_perl
 
 # chown user
-RUN sudo chown -R builder:builder /home/builder/
+RUN sudo chown -R builder:builder /huser/
 
 # install yay
 RUN \
-    cd /home/builder && \
+    cd /huser/ && \
     curl -O -s https://aur.archlinux.org/cgit/aur.git/snapshot/yay-bin.tar.gz && \
     tar xf yay-bin.tar.gz && \
     cd yay-bin && makepkg -is --skippgpcheck --noconfirm && cd .. && \
     rm -rf yay-bin && rm yay-bin.tar.gz
 
+RUN yay -S aurutils
+
 # chown user
-RUN sudo chown -R builder:builder /home/builder/
+RUN sudo chown -R builder:builder /huser/
 
 RUN sudo pacman -Scc --noconfirm
 

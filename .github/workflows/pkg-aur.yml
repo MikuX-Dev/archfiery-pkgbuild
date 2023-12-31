@@ -30,7 +30,7 @@ jobs:
         docker build -t pkgb .
         docker run --rm -v /home/runner/work/archfiery-pkgbuild/archfiery-pkgbuild:/home/builder pkgb
         sudo chown -R builder:builder .*
-        sudo chmod +x pkg-aur.sh && ./pkg-aur.sh
+        # sudo chmod +x pkg-aur.sh && ./pkg-aur.sh
 
     - name: Clone Repository
       run: |
