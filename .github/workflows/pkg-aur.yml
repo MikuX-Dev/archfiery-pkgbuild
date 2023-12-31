@@ -17,9 +17,6 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
-      with:
-        repository: MikuX-Dev/archfiery-pkgbuild
-        path: /home/builder/archfiery-pkgbuild
 
     - name: Import SSH key
       run: |
@@ -32,8 +29,8 @@ jobs:
 
     - name: build docker and run
       run: |
-        sudo sed -i '/E_ROOT/d' /usr/bin/makepkg
         sudo chown -R builder:builder .*
+        sudo sed -i '/E_ROOT/d' /usr/bin/makepkg
         sudo chmod +x pkg-aur.sh && ./pkg-aur.sh
 
     - name: Clone Repository
