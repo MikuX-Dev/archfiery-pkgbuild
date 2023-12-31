@@ -12,14 +12,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: archlinux:base-devel
+      image: archlinux:latest
 
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
-    - name: Prepare
-      run: pacmam-key --init && pacman -S archlinux-keyring && pacman -Syyu openssh devtools base-devel --noconfirm --needed
+    - name: setup pacman
+      run: |
+          pacman-key --init
+          pacman --noconfirm -Syy archlinux-keyring
+          pacman --noconfirm --needed -Sy reflector rsync curl wget && \
+          reflector --latest 21 -f 21 -n 21 --age 21 --protocol https --download-timeout 55 --sort rate --save /etc/pacman.d/mirrorlist && \
+          pacman --noconfirm --needed -Syy openssh base-devel devtools sudo git namcap fakeroot audit grep diffutils
+
+          useradd -m -s /bin/bash -G wheel builder && \
+          sed -i 's/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers && \
+          echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
     - name: Import SSH key
       run: |
