@@ -29,6 +29,7 @@ jobs:
 
     - name: build docker and run
       run: |
+        sudo sed -i '/E_ROOT/d' /usr/bin/makepkg
         sudo chown -R builder:builder .*
         sudo chmod +x pkg-aur.sh && ./pkg-aur.sh
 
