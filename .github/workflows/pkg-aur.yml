@@ -27,8 +27,9 @@ jobs:
 
     - name: build docker and run
       run: |
-        docker run --rm -v /home/runner/work/archfiery-pkgbuild/archfiery-pkgbuild:/home/builder mikuxdev/pkg-aur:latest
-        echo "Running script"
+        docker build -t pkgb .
+        docker run --rm -v /home/runner/work/archfiery-pkgbuild/archfiery-pkgbuild:/home/builder pkgb
+        sudo chown -R builder:builder .*
         sudo chmod +x pkg-aur.sh && ./pkg-aur.sh
 
     - name: Clone Repository
