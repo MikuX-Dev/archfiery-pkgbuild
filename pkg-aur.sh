@@ -14,22 +14,20 @@ if [ -d "/github" ]; then
   sudo chown -R builder:builder /github/workspace /github/home
 fi
 
-# Define the package names
-NAME=("btrfs-assistant" "snapper-gui-git" "mkinitcpio-firmware" "firmware-manager" "pikaur" "yay-bin")
-
-# Create a folder for each package and download PKGBUILD
-for pkg in "${NAME[@]}"; do
-  git clone https://aur.archlinux.org/"$pkg".git "$pkg"
-done
+WORKSPACE_DIR=${GITHUB_WORKSPACE:-$(pwd)}
 
 # Create the "output" directory
-mkdir -p "output"
+mkdir "$WORKSPACE_DIR/output"
 
-# Build and package each package
-for pkg in "${NAME[@]}"; do
-  cd "$pkg" || exit 1
+packages=("btrfs-assistant" "snapper-gui-git" "mkinitcpio-firmware" "firmware-manager" "pikaur" "yay-bin") # Add your package names here
+
+# Loop through the packages, clone, build, and copy
+for package in "${packages[@]}"; do
+  git clone "https://aur.archlinux.org/$package.git"
+  cd "$package" || exit
   makepkg -csf --noconfirm --needed --noprogressbar
-  cp -r ./*.pkg.tar.* output/ # Assuming output is a folder in the same directory as this script
+  cp -r ./*.pkg.* "$WORKSPACE_DIR"/output # Replace /path/to/output/directory with the actual path
+  cd ..
 done
 
 echo "Packages built and copied to the output folder."

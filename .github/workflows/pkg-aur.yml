@@ -25,10 +25,16 @@ jobs:
         chmod 600 ~/.ssh/id_rsa.pub
         ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-    - name: build docker and run
-      run: |
-        docker build -t pkgb .
-        docker run --rm --mount type=bind,src="$(pwd)",target=/home/builder pkgb
+    - uses: addnab/docker-run-action@v3
+      with:
+        image: mikuxdev/pkg-aur:latest
+        options: -v ${{ github.workspace }}:/home/builder:rw
+        run: |
+          echo "::Running Script::"
+          pwd
+          find .
+          chmod +x pkg-aur.sh
+          ./pkg-aur.sh
 
     - name: Clone Repo and copy pkg and Commit and Push Changes
       run: |
