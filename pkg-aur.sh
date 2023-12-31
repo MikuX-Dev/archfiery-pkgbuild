@@ -17,22 +17,19 @@ fi
 # Define the package names
 NAME=("btrfs-assistant" "snapper-gui-git" "mkinitcpio-firmware" "firmware-manager" "pikaur" "yay-bin")
 
-# Set the workspace directory
-WORKSPACE_DIR=${GITHUB_WORKSPACE:-$(pwd)}
-
 # Create a folder for each package and download PKGBUILD
 for pkg in "${NAME[@]}"; do
-  git clone https://aur.archlinux.org/"$pkg".git "$WORKSPACE_DIR/$pkg"
+  git clone https://aur.archlinux.org/"$pkg".git "$pkg"
 done
 
 # Create the "output" directory
-mkdir -p "$WORKSPACE_DIR/output"
+mkdir -p "output"
 
 # Build and package each package
 for pkg in "${NAME[@]}"; do
-  cd "$WORKSPACE_DIR/$pkg" || exit 1
+  cd "$pkg" || exit 1
   makepkg -csf --noconfirm --needed --noprogressbar
-  cp -r ./*.pkg.tar.* "$WORKSPACE_DIR/output/" # Assuming output is a folder in the same directory as this script
+  cp -r ./*.pkg.tar.* "output/" # Assuming output is a folder in the same directory as this script
 done
 
 echo "Packages built and copied to the output folder."

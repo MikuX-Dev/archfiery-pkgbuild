@@ -1,5 +1,5 @@
 # Use the Arch Linux base image with development tools
-FROM archlinux:base-devel
+FROM marvin0815/aurbuild
 
 RUN pacman-key --init
 
@@ -21,11 +21,6 @@ RUN pacman -Syy --noconfirm --quiet --needed archlinux-keyring
 RUN pacman -Syyu --noconfirm --quiet --needed reflector rsync curl wget base-devel devtools sudo git namcap fakeroot audit grep diffutils && \
     reflector --latest 21 -f 21 -n 21 --age 21 --protocol https --download-timeout 55 --sort rate --save /etc/pacman.d/mirrorlist && \
     pacman -Syy
-
-# Add builder User
-RUN useradd -d /huser -s /bin/bash -G wheel builder && \
-    sed -i 's/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers && \
-    echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 # chown user
 RUN chown -R builder:builder /huser/

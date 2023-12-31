@@ -11,6 +11,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: mikuxdev/pkg-aur:latest
 
     steps:
     - name: Checkout Repository
@@ -27,10 +29,8 @@ jobs:
 
     - name: build docker and run
       run: |
-        docker build -t pkgb .
-        docker run --rm -v /home/runner/work/archfiery-pkgbuild/archfiery-pkgbuild:/home/builder pkgb
         sudo chown -R builder:builder .*
-        # sudo chmod +x pkg-aur.sh && ./pkg-aur.sh
+        sudo chmod +x pkg-aur.sh && ./pkg-aur.sh
 
     - name: Clone Repository
       run: |
@@ -38,7 +38,6 @@ jobs:
 
     - name: Copy Packages to Repository
       run: |
-        mkdir output/
         cp -r output/* archfiery-repo/x86_64/
 
     - name: Commit and Push Changes
