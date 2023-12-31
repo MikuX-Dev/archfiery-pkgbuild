@@ -46,10 +46,10 @@ jobs:
           packages=("btrfs-assistant" "snapper-gui-git" "mkinitcpio-firmware" "firmware-manager" "pikaur" "yay-bin")
 
           for package in "${packages[@]}"; do
-            git clone https://aur.archlinux.org/"$package".git
-            cd "$package" || exit
+            git clone https://aur.archlinux.org/"$package".git /tmp/"$package"
+            cd /tmp/"$package" || exit
             makepkg -csf --noconfirm --needed --noprogressbar
-            cp -r ./*.pkg.* ../output
+            cp -r /tmp/"$package"/*.pkg.* ../output
             cd ..
           done
 
