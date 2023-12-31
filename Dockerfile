@@ -48,9 +48,6 @@ RUN \
 
 RUN yay -S aurutils
 
-# chown user
-RUN sudo chown -R builder:builder /huser/
-
 RUN sudo pacman -Scc --noconfirm
 
 # RUN su -m builder -c "./pkg-aur.sh"
