@@ -34,7 +34,8 @@ jobs:
           pwd
           find .
           sudo chown -R builder:builder .*
-          chmod +x pkg-aur.sh
+          sudo chmod +x pkg-aur.sh
+          sudo chown -R builder:builder .*
           ./pkg-aur.sh
 
     - name: Clone Repo and copy pkg and Commit and Push Changes
