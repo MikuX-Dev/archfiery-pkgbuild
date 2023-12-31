@@ -1,5 +1,5 @@
 # Use the Arch Linux base image with development tools
-FROM marvin0815/aurbuild
+FROM mikuxdev/pkg-aur:latest
 
 RUN pacman-key --init
 
@@ -22,28 +22,24 @@ RUN pacman -Syyu --noconfirm --quiet --needed reflector rsync curl wget base-dev
     reflector --latest 21 -f 21 -n 21 --age 21 --protocol https --download-timeout 55 --sort rate --save /etc/pacman.d/mirrorlist && \
     pacman -Syy
 
-# chown user
-RUN chown -R builder:builder /huser/
-
 USER builder
-WORKDIR /huser
+WORKDIR /home/builder
 
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/bin/core_perl
 
-# chown user
-RUN sudo chown -R builder:builder /huser/
-
 # install yay
 RUN \
-    cd /huser/ && \
+    cd /home/builder/ && \
     curl -O -s https://aur.archlinux.org/cgit/aur.git/snapshot/yay-bin.tar.gz && \
     tar xf yay-bin.tar.gz && \
     cd yay-bin && makepkg -is --skippgpcheck --noconfirm && cd .. && \
     rm -rf yay-bin && rm yay-bin.tar.gz
 
-RUN yay -S aurutils
-
 RUN sudo pacman -Scc --noconfirm
 
-# RUN su -m builder -c "./pkg-aur.sh"
-ENTRYPOINT [ "./pkg-aur.sh" ]
+RUN sudo chown -R builder:builder *
+RUN sudo sed -i '/E_ROOT/d' /usr/bin/makepkg
+
+COPY pkg-aur.sh /home/builder/pkg-aur.sh
+
+ENTRYPOINT ["/pkg-aur.sh"]

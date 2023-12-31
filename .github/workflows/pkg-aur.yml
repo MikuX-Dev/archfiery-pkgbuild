@@ -11,8 +11,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: mikuxdev/pkg-aur:latest
 
     steps:
     - name: Checkout Repository
@@ -29,20 +27,13 @@ jobs:
 
     - name: build docker and run
       run: |
-        sudo chown -R builder:builder .*
-        sudo sed -i '/E_ROOT/d' /usr/bin/makepkg
-        sudo chmod +x pkg-aur.sh && ./pkg-aur.sh
+        docker build -t pkgb .
+        docker run -d -v pwd:/home/builder/:rw pkgb
 
-    - name: Clone Repository
+    - name: Clone Repo and copy pkg and Commit and Push Changes
       run: |
         git clone git@github.com:MikuX-Dev/archfiery-repo.git
-
-    - name: Copy Packages to Repository
-      run: |
         cp -r output/* archfiery-repo/x86_64/
-
-    - name: Commit and Push Changes
-      run: |
         cd archfiery-repo
         git config --local user.email "actions@github.com"
         git config --local user.name "GitHub Actions"
