@@ -64,18 +64,19 @@ jobs:
         for package in "${packages[@]}"; do
           git clone https://aur.archlinux.org/"$package".git /tmp/pkg-build/"$package"
           cd /tmp/pkg-build/"$package" || exit
-          makepkg -csd --noconfirm --needed --noprogressbar --skippgpcheck --skipchecksums --nosign  
+          makepkg -cs --noconfirm --needed --noprogressbar --skippgpcheck --skipchecksums --nosign  
           cp -r *.pkg.tar.* /home/builder/output
           cd -
         done
 
-        pkgsize=$(du -sh *.pkg.tar.* | cut -f1)
-          if [[ $pkgsize -gt 100*1024*1024 ]]; then
-            echo "$package >= 100MB" 
-            mv  /home/builder/output/*.pkg.tar.* /home/builder/output/large
-          else
-            mv /home/builder/output/*.pkg.tar.* /home/builder/output/small
-          fi
+        pkgsize=$(du -s .pkg.tar.* | cut -f1)  # Remove 'h' for human-readable, use 's' for total size in kilobytes
+
+        if [ "$pkgsize" -gt $((100*1024)) ]; then
+          echo "$package >= 100MB"
+          mv /home/builder/output/*.pkg.tar.* /home/builder/output/large
+        else
+          mv /home/builder/output/*.pkg.tar.* /home/builder/output/small
+        fi
         '
 
     - name: Clone Repo and copy pkg and Commit and Push Changes
@@ -85,18 +86,13 @@ jobs:
         git clone git@github.com:MikuX-Dev/archfiery-repo.git
         cd archfiery-repo/
         git lfs install
-        echo "*.zst filter=lfs diff=lfs merge=lfs -text" > .gitattributes
 
         cd x86_64/
-
-        packages=("octopi" "megasync-bin" "appmenu-gtk-module-git" "appmenu-qt4" "bluez-firmware" "brave-bin" "caffeine-ng" "dolphin-megasync-bin" "downgrade" "eww-x11" "fancontrol-gui" "firebuild" "gtk3-nocsd-git" "libdbusmenu-glib" "libdbusmenu-gtk2" "libdbusmenu-gtk3" "mkinitcpio-firmware" "mkinitcpio-numlock" "mugshot" "nbfc" "obsidian-bin" "ocs-url" "repoctl" "rtl8821ce-dkms-git" "rtw89-dkms-git" "stacer-bin" "tela-icon-theme" "thunar-extended" "thunar-megasync-bin" "thunar-secure-delete" "thunar-shares-plugin" "thunar-vcs-plugin" "universal-android-debloater-bin" "vala-panel-appmenu-common-git" "vala-panel-appmenu-registrar-git" "vala-panel-appmenu-xfce-git" "xfce4-docklike-plugin" "xfce4-panel-profiles" "zsh-theme-powerlevel10k-git" "tlpui" "simplescreenrecorder" "visual-studio-code-bin" "ncurses5-compat-libs" "lib32-ncurses5-compat-libs" "aosp-devel" "xml2" "lineageos-devel" "btrfs-assistant" "snapper-gui-git" "firmware-manager" "yay-bin")
-
-        for package in "${packages[@]}"; do
-          rm -rf ./*"$package"*pkg.tar.*
-        done
+        rm -rf ./*.pkg.tar.*
 
         cp -r /home/builder/output/large/* ./
         git lfs track ./
+        mv .gitattributes /home/builder/archfiery-repo/
         cp -r /home/builder/output/small/* ./
 
         chmod +x ./update-db.sh
