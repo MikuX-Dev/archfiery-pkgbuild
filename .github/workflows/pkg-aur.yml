@@ -64,7 +64,8 @@ jobs:
         for package in "${packages[@]}"; do
           git clone https://aur.archlinux.org/"$package".git /tmp/pkg-build/"$package"
           cd /tmp/pkg-build/"$package" || exit
-          makepkg -cs --noconfirm --needed --noprogressbar
+          # sed -i 's/sha256sums=.*/sha256sums=()
+          makepkg -csd --noconfirm --needed --noprogressbar --skippgpcheck --skipchecksums --nosign
           pkgsize=$(du -sh *.pkg.tar.zst | cut -f1)
           if [[ $pkgsize > 100*1024*1024 ]]; then
             echo "$package >= 100MB"
@@ -102,11 +103,13 @@ jobs:
 
         cp -r /tmp/output/small/* ./
 
-        mv .gitattributes /home/builder/archfiery-repo/
+        find /tmp -name .gitattributes -exec mv {} /home/builder/archfiery-repo/ \;
+        find /home -name .gitattributes -exec mv {} /home/builder/archfiery-repo/ \;
 
         chmod +x ./update-db.sh
         ./update-db.sh
 
+        cd /home/builder/archfiery-repo/
         git config --local user.email "actions@github.com"
         git config --local user.name "GitHub Actions"
         git add .
