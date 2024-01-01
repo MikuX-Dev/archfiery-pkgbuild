@@ -64,13 +64,13 @@ jobs:
         for package in "${packages[@]}"; do
           git clone https://aur.archlinux.org/"$package".git /tmp/pkg-build/"$package"
           cd /tmp/pkg-build/"$package" || exit
-          makepkg -csd --noconfirm --needed --noprogressbar --skippgpcheck --skipchecksums --nosign
+          makepkg -csd --noconfirm --needed --noprogressbar --skippgpcheck --skipchecksums --nosign  
           pkgsize=$(du -sh *.pkg.tar.zst | cut -f1)
-          if [[ $pkgsize > 100*1024*1024 ]]; then
-            echo "$package >= 100MB"
+          if [[ $pkgsize -gt 100*1024*1024 ]]; then
+            echo "$package >= 100MB" 
             mv *.pkg.tar.zst /tmp/output/large
           else
-            mv *.pkg.tar.zst /tmp/output/small
+            mv *.pkg.tar.zst /tmp/output/small 
           fi
           cd -
         done
@@ -94,16 +94,11 @@ jobs:
         done
 
         cp -r /tmp/output/large/* ./
-
-        for pkg in /tmp/output/large/*.zst; do
-          filename=$(basename $pkg)
-          git lfs track "./$filename"
-        done
-
+        git lfs track ./
         cp -r /tmp/output/small/* ./
 
-        find /tmp -name .gitattributes -exec mv {} /home/builder/archfiery-repo/ \;
-        find /home -name .gitattributes -exec mv {} /home/builder/archfiery-repo/ \;
+        # find /tmp -name .gitattributes -exec mv {} /home/builder/archfiery-repo/ \;
+        # find /home -name .gitattributes -exec mv {} /home/builder/archfiery-repo/ \;
 
         chmod +x ./update-db.sh
         ./update-db.sh
