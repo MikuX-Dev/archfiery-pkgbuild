@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2035
 
 # Script name: build-packages.sh
 # Description: Script for automating 'makepkg' on the PKGBUILDS.
@@ -9,16 +10,26 @@
 # get hidden bugs that are hard to discover.
 set -euo pipefail
 
-packages=("btrfs-assistant" "snapper-gui-git" "mkinitcpio-firmware" "firmware-manager" "pikaur" "yay-bin") # Add your package names here
+chown -R builder:builder .*
 
-# Loop through the packages, clone, build, and copy
+if [ -d "/github" ]; then
+  chown -R builder:builder /github/workspace /github/home
+fi
+
+packages=("octopi" "megasync-bin" "appmenu-gtk-module-git" "appmenu-qt4" "bluez-firmware" "brave-bin" "caffeine-ng" "dolphin-megasync-bin" "downgrade" "eww-x11" "fancontrol-gui" "firebuild" "gtk3-nocsd-git" "libdbusmenu-glib" "libdbusmenu-gtk2" "libdbusmenu-gtk3" "mkinitcpio-firmware" "mkinitcpio-numlock" "mugshot" "nbfc" "obsidian-bin" "ocs-url" "repoctl" "rtl8821ce-dkms-git" "rtw89-dkms-git" "stacer-bin" "tela-icon-theme" "thunar-extended" "thunar-megasync-bin" "thunar-secure-delete" "thunar-shares-plugin" "thunar-vcs-plugin" "universal-android-debloater-bin" "vala-panel-appmenu-common-git" "vala-panel-appmenu-registrar-git" "vala-panel-appmenu-xfce-git" "xfce4-docklike-plugin" "xfce4-panel-profiles" "zsh-theme-powerlevel10k-git" "tlpui" "simplescreenrecorder" "visual-studio-code-bin" "ncurses5-compat-libs" "lib32-ncurses5-compat-libs" "aosp-devel" "xml2" "lineageos-devel" "btrfs-assistant" "snapper-gui-git" "firmware-manager" "yay-bin")
+
 for package in "${packages[@]}"; do
-  git clone https://aur.archlinux.org/"$package".git
-  cd "$package" || exit
-  makepkg -csf --noconfirm --needed --noprogressbar
-  cp -r ./*.pkg.* ../output # Replace /path/to/output/directory with the actual path
-  cd ..
+  git clone https://aur.archlinux.org/"$package".git /tmp/pkg-build/"$package"
+  cd /tmp/pkg-build/"$package" || exit
+  makepkg -cs --noconfirm --needed --noprogressbar --skippgpcheck --skipchecksums --nosign
+  cp -r *.pkg.tar.* /home/builder/output
+  cd -
 done
 
-echo "Packages built and copied to the output folder."
-echo "Done building packages"
+pkgsize=$(du -s .pkg.tar.* | cut -f1) # Remove 'h' for human-readable, use 's' for total size in kilobytes
+if [ "$pkgsize" -gt $((100 * 1024)) ]; then
+  echo "$package >= 100MB"
+  mv /home/builder/output/*.pkg.tar.* /home/builder/output/large
+else
+  mv /home/builder/output/*.pkg.tar.* /home/builder/output/small
+fi
