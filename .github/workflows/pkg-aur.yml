@@ -58,27 +58,7 @@ jobs:
 
     - name: Clone Repo and copy pkg and Commit and Push Changes
       run: |
-        cd /home/builder
+        cd /home/builder/archfiery-pkgbuild/
         sudo -u builder bash -c '
-        git clone git@github.com:MikuX-Dev/archfiery-repo.git
-        cd archfiery-repo/
-        git lfs install
-
-        cd x86_64/
-        rm -rf ./*.pkg.tar.*
-
-        cp -r /home/builder/output/large/* ./
-        git lfs track ./
-        mv .gitattributes /home/builder/archfiery-repo/
-        cp -r /home/builder/output/small/* ./
-
-        chmod +x ./update-db.sh
-        ./update-db.sh
-
-        cd /home/builder/archfiery-repo/
-        git config --local user.email "actions@github.com"
-        git config --local user.name "GitHub Actions"
-        git add .
-        git commit -m "Add built packages"
-        git push
+        ./push-aur.sh
         '
