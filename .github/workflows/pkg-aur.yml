@@ -93,14 +93,14 @@ jobs:
           rm -rf ./*"$package"*pkg.tar.*
         done
 
-        cp -r /tmp/output/small/* ./
+        cp -r /tmp/output/large/* ./
 
         for pkg in /tmp/output/large/*.zst; do
           filename=$(basename $pkg)
-          git lfs track "x86_64/$filename"
+          git lfs track "./$filename"
         done
 
-        cp -r /tmp/output/large/* ./
+        cp -r /tmp/output/small/* ./
 
         mv .gitattributes /home/builder/archfiery-repo/
 
