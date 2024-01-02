@@ -10,12 +10,6 @@
 # get hidden bugs that are hard to discover.
 set -euo pipefail
 
-chown -R builder:builder .*
-
-if [ -d "/github" ]; then
-  chown -R builder:builder /github/workspace /github/home
-fi
-
 update_pkg() {
   local pkg="$1"
   # Remove validpgpkeys variable
@@ -42,7 +36,7 @@ done
 pkgsize=$(du -s *.pkg.tar.* | cut -f1)
 if [ "$pkgsize" -gt $((100 * 1024)) ]; then
   echo "$package >= 100MB"
-  mv /home/builder/output/*.pkg.tar.* /home/builder/output/large
+  mv /home/builder/output/*.pkg.tar.* /home/builder/output-large
 else
-  mv /home/builder/output/*.pkg.tar.* /home/builder/output/small
+  mv /home/builder/output/*.pkg.tar.* /home/builder/output-small
 fi

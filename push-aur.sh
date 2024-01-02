@@ -10,14 +10,13 @@
 # get hidden bugs that are hard to discover.
 set -euo pipefail
 
-git clone git@github.com:MikuX-Dev/archfiery-repo.git /home/builder/archfiery-repo
-cd ../archfiery-repo/
+cd /home/builder/archfiery-repo/
 git lfs install
 
 cd x86_64/
 rm -rf ./*.pkg.tar.*
 
-cp -r /home/builder/output/large/* ./
+cp -r /home/builder/output-large/* ./
 
 cat >>.gitattributes <<EOF
 *.zst filter=lfs diff=lfs merge=lfs -text
@@ -25,14 +24,14 @@ cat >>.gitattributes <<EOF
 EOF
 
 # Track large packages with Git LFS and echo each name
-for package in /home/builder/output/large/*.pkg.tar.*; do
+for package in ./*.pkg.tar.*; do
   name=$(basename "$package")
   echo "Tracking $name with Git LFS"
   git lfs track "$name"
 done
 
 mv .gitattributes /home/builder/archfiery-repo/
-cp -r /home/builder/output/small/* ./
+cp -r /home/builder/output-small/* ./
 
 chmod +x ./update-db.sh
 ./update-db.sh

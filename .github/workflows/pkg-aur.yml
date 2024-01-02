@@ -34,7 +34,7 @@ jobs:
       run: |
         cd /home/builder
         sudo -u builder bash -c '
-        mkdir -p .ssh /tmp/pkg-build /home/builder/output  /home/builder/output/large  /home/builder/output/small
+        mkdir -p .ssh /tmp/pkg-build /home/builder/output  /home/builder/output-large  /home/builder/output-small
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > .ssh/id_rsa
         echo "${{ secrets.SSH_PRIVATE_KEY_PUB }}" > .ssh/id_rsa.pub
         chmod 600 .ssh/id_rsa
@@ -49,6 +49,10 @@ jobs:
         ls -la /home/builder
         pwd
         find .
+        sudo chown -R builder:builder .*
+        if [ -d "/github" ]; then
+          sudo chown -R builder:builder /github/workspace /github/home
+        fi
         git clone git@github.com:MikuX-Dev/archfiery-pkgbuild.git
         chown -R builder:builder .*
         cd archfiery-pkgbuild/
@@ -60,5 +64,6 @@ jobs:
       run: |
         cd /home/builder/archfiery-pkgbuild/
         sudo -u builder bash -c '
+        git clone git@github.com:MikuX-Dev/archfiery-repo.git /home/builder/archfiery-repo
         ./push-aur.sh
         '
