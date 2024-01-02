@@ -53,11 +53,14 @@ jobs:
         if [ -d "/github" ]; then
           sudo chown -R builder:builder /github/workspace /github/home
         fi
-        cd /home/builder && \
-        curl -O -s https://aur.archlinux.org/cgit/aur.git/snapshot/pikaur.tar.gz && \
-        tar xf pikaur.tar.gz && \
-        cd pikaur && makepkg -is --skippgpcheck --noconfirm && cd .. && \
-        rm -rf pikaur && rm pikaur.tar.gz
+        cd /home/builder
+        curl -O -s https://aur.archlinux.org/cgit/aur.git/snapshot/pikaur.tar.gz
+        tar xf pikaur.tar.gz
+        cd pikaur
+        makepkg -is --skippgpcheck --noconfirm --needed
+        cd /home/builder
+        rm -rf pikaur
+        rm pikaur.tar.gz
         git clone git@github.com:MikuX-Dev/archfiery-pkgbuild.git
         chown -R builder:builder .*
         cd archfiery-pkgbuild/
