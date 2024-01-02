@@ -51,7 +51,7 @@ jobs:
         chown -R builder:builder .*
         tar xf yay-bin.tar.gz
         cd yay-bin
-        makepkg -is --skippgpcheck --noconfirm --needed
+        makepkg -is --noconfirm --needed
         cd /home/builder
         rm -rf yay-bin*
         git clone git@github.com:MikuX-Dev/archfiery-pkgbuild.git

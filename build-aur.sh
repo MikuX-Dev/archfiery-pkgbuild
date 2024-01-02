@@ -10,6 +10,8 @@
 # get hidden bugs that are hard to discover.
 set -euo pipefail
 
+cd /home/builder
+
 # update_pkg() {
 #   local pkg="$1"
 #   # Remove validpgpkeys variable
