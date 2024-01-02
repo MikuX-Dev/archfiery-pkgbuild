@@ -25,7 +25,7 @@ set -euo pipefail
 packages=("octopi" "megasync-bin" "appmenu-gtk-module-git" "appmenu-qt4" "bluez-firmware" "brave-bin" "caffeine-ng" "downgrade" "eww-x11" "fancontrol-gui" "firebuild" "gtk3-nocsd-git" "libdbusmenu-glib" "libdbusmenu-gtk2" "libdbusmenu-gtk3" "mkinitcpio-firmware" "mkinitcpio-numlock" "mugshot" "nbfc" "obsidian-bin" "ocs-url" "repoctl" "rtl8821ce-dkms-git" "rtw89-dkms-git" "stacer-bin" "tela-icon-theme" "thunar-extended" "thunar-megasync-bin" "thunar-secure-delete" "thunar-shares-plugin" "thunar-vcs-plugin" "universal-android-debloater-bin" "vala-panel-appmenu-common-git" "vala-panel-appmenu-registrar-git" "vala-panel-appmenu-xfce-git" "xfce4-docklike-plugin" "xfce4-panel-profiles" "zsh-theme-powerlevel10k-git" "tlpui" "simplescreenrecorder" "visual-studio-code-bin" "ncurses5-compat-libs" "lib32-ncurses5-compat-libs" "aosp-devel" "xml2" "lineageos-devel" "btrfs-assistant" "snapper-gui-git" "firmware-manager" "yay-bin")
 
 for package in "${packages[@]}"; do
-  pikaur -Sw "$package"
+  pikaur -Sw --noconfirm --needed "$package"
   # git clone https://aur.archlinux.org/"$package".git /tmp/pkg-build/"$package"
   # cd /tmp/pkg-build/"$package" || exit
   # update_pkg PKGBUILD
