@@ -34,7 +34,7 @@ jobs:
       run: |
         cd /home/builder
         sudo -u builder bash -c '
-        mkdir -p .ssh /tmp/pkg-build /home/builder/output  /home/builder/output-large  /home/builder/output-small
+        mkdir -p .ssh /tmp/pkg-build /home/builder/output-large /home/builder/output-small .cache/pikaur/pkg/
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > .ssh/id_rsa
         echo "${{ secrets.SSH_PRIVATE_KEY_PUB }}" > .ssh/id_rsa.pub
         chmod 600 .ssh/id_rsa
@@ -57,6 +57,11 @@ jobs:
         chown -R builder:builder .*
         cd archfiery-pkgbuild/
         chmod +x *.sh
+        cd /home/builder && \
+        curl -O -s https://aur.archlinux.org/cgit/aur.git/snapshot/pikaur.tar.gz && \
+        tar xf pikaur.tar.gz && \
+        cd pikaur && makepkg -is --skippgpcheck --noconfirm && cd .. && \
+        rm -rf pikaur && rm pikaur.tar.gz
         ./build-aur.sh
         '
 
