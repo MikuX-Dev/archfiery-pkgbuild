@@ -27,14 +27,12 @@ downgrade
 electron28-bin
 etcher-bin
 eww
-expect
 fancontrol-gui
 ffmpeg-full
 firmware-manager
 google-chrome
 gpu-screen-recorder-git
 gtk3-nocsd-git
-libnotify
 librewolf-bin
 lightdm-webkit2-theme-glorious
 lineageos-devel
