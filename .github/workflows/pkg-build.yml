@@ -1,4 +1,4 @@
-name: pkg-aur
+name: pkg-build
 
 on:
   push:
@@ -26,7 +26,7 @@ jobs:
 
           pacman --noconfirm -Syy archlinux-keyring
           pacman --noconfirm --needed -Sy reflector rsync curl wget git-lfs && \
-          reflector --latest 21 -f 21 -n 21 --age 21 --protocol https --download-timeout 55 --sort rate --save /etc/pacman.d/mirrorlist && \
+          reflector --latest 21 -f 21 --protocol https --download-timeout 55 --sort rate --save /etc/pacman.d/mirrorlist && \
           pacman --noconfirm --needed -Syy openssh base-devel devtools sudo git lib32-readline lib32-zlib namcap fakeroot audit grep diffutils
           useradd -m -d /home/builder -s /bin/bash -G wheel builder && \
           sed -i 's/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers && \
@@ -36,7 +36,7 @@ jobs:
       run: |
         cd /home/builder
         sudo -u builder bash -c '
-        mkdir -p .ssh /tmp/pkg-build /home/builder/output /home/builder/output-large /home/builder/output-small .cache/yay-bin/pkg/
+        mkdir -p .ssh
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > .ssh/id_rsa
         echo "${{ secrets.SSH_PRIVATE_KEY_PUB }}" > .ssh/id_rsa.pub
         chmod 600 .ssh/id_rsa
@@ -45,8 +45,8 @@ jobs:
         '
     - name: Build pkg
       run: |
-        sudo -u builder bash -c '
         cd /home/builder
+        sudo -u builder bash -c '
         ls -la /home/builder
         pwd
         find .
@@ -58,19 +58,19 @@ jobs:
         git clone https://aur.archlinux.org/yay-bin.git
         chown -R builder:builder .*
         cd yay-bin
-        makepkg -scif --noconfirm --needed --noprogressbar --skippgpcheck
+        makepkg -sci --noconfirm --needed --noprogressbar --skippgpcheck
         cd /home/builder
         rm -rf yay-bin*
         git clone git@github.com:MikuX-Dev/archfiery-pkgbuild.git
         chown -R builder:builder .*
         cd archfiery-pkgbuild/
         chmod +x *.sh
-        ./build-aur.sh
+        ./build.sh
         '
     - name: Clone Repo and copy pkg and Commit and Push Changes
       run: |
         cd /home/builder/archfiery-pkgbuild/
         sudo -u builder bash -c '
         git clone git@github.com:MikuX-Dev/archfiery-repo.git /home/builder/archfiery-repo
-        ./push-aur.sh
+        ./push.sh
         '
