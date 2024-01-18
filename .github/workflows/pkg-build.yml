@@ -26,7 +26,7 @@ jobs:
             echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" | tee -a /etc/pacman.conf; \
           fi
 
-          pacman --noconfirm --needed -Syyu reflector rsync curl wget git-lfs openssh base-devel devtools sudo git lib32-readline lib32-zlib namcap fakeroot audit grep diffutils
+          pacman --noconfirm --needed -Syy reflector rsync curl wget git-lfs openssh base-devel devtools sudo git lib32-readline lib32-zlib namcap fakeroot audit grep diffutils
 
           reflector --latest 21 --protocol https --download-timeout 55 --sort rate --save /etc/pacman.d/mirrorlist
 
