@@ -1,12 +1,5 @@
 adbmanager-bin
-alpm_octopi_utils
-android-apktool
-android-ndk
-android-platform
-android-sdk
-android-sdk-build-tools
-android-sdk-platform-tools
-android-unpackbootimg
+sdkmanager
 anydesk-bin
 aosp-devel
 appimagelauncher
@@ -21,6 +14,7 @@ caffeine-ng
 cpu-x
 cpupower-gui
 davinci-resolve
+davinci-resolve-studio
 debtap
 dex2jar
 downgrade
@@ -30,8 +24,6 @@ eww
 fancontrol-gui
 ffmpeg-full
 firmware-manager
-google-chrome
-gpu-screen-recorder-git
 gtk3-nocsd-git
 librewolf-bin
 lightdm-webkit2-theme-glorious
@@ -55,7 +47,6 @@ paru-bin
 pomatez
 powershell-bin
 qbittorrent-enhanced
-repoctl
 simplescreenrecorder-bin
 slack-desktop
 snapper-gui-git
