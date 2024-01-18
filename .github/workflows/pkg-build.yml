@@ -27,7 +27,7 @@ jobs:
 
           pacman --noconfirm -Syyu reflector rsync curl wget git-lfs openssh base-devel devtools sudo git lib32-readline lib32-zlib namcap fakeroot audit grep diffutils
 
-          reflector --latest 21 -f 21 -a 21 --protocol https --download-timeout 55 --sort rate --save /etc/pacman.d/mirrorlist && \
+          reflector --latest 21 -f 21 -n 21 --age 21 --protocol https --download-timeout 55 --sort rate --save /etc/pacman.d/mirrorlist
 
           useradd -m -d /home/builder -s /bin/bash -G wheel builder
           sed -i 's/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers

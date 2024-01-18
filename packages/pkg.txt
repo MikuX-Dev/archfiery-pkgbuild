@@ -72,12 +72,11 @@ timeshift-autosnap
 tlpui
 tor-browser-bin
 ungoogled-chromium-bin
-universal-android-debloater
 universal-android-debloater-bin
 update-grub
-vala-panel-appmenu-common
-vala-panel-appmenu-registrar
-vala-panel-appmenu-xfce
+vala-panel-appmenu-common-git
+vala-panel-appmenu-registrar-git
+vala-panel-appmenu-xfce-git
 ventoy-bin
 visual-studio-code-bin
 xfce4-docklike-plugin

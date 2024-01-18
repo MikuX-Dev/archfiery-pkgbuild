@@ -66,9 +66,9 @@ install_aur_deps() {
   for dep in "${all_deps[@]}"; do
     if ! is_in_repos "$dep"; then
       echo "Installing AUR dependency: $dep"
-      yay -S --needed --noconfirm --asdeps --sudoloop "$dep"
+      yay -Sy --needed --noconfirm --asdeps --sudoloop "$dep"
     else
-      sudo pacman -S --needed --noconfirm --asdeps "$dep"
+      sudo pacman -Sy --needed --noconfirm --asdeps "$dep"
     fi
   done
 }
