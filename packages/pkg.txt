@@ -1,6 +1,3 @@
-adbmanager-bin
-sdkmanager
-anydesk-bin
 aosp-devel
 appimagelauncher
 appmenu-gtk-module-git
@@ -48,11 +45,13 @@ pomatez
 powershell-bin
 qbittorrent-enhanced
 simplescreenrecorder-bin
+signal-cli
 slack-desktop
 snapper-gui-git
 spotify
 stacer-bin
-tela-icon-theme-bin
+tela-icon-theme-bi
+telegram-desktop-bin
 thorium-browser-bin
 thunar-extended
 thunar-megasync-bin
@@ -74,5 +73,4 @@ xfce4-docklike-plugin
 xfce4-panel-profiles
 xml2
 yay-bin
-zoom
 zsh-theme-powerlevel10k-git
