@@ -28,10 +28,6 @@ jobs:
 
           pacman --noconfirm --needed -Syy reflector rsync curl wget git-lfs openssh base-devel devtools sudo git lib32-readline lib32-zlib namcap fakeroot audit grep diffutils
 
-          reflector --latest 10 -f 10 -n 10 --age 10 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
-         
-          pacman -Syy
-
           useradd -m -d /home/builder -s /bin/bash -G wheel builder
           sed -i 's/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
           echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
