@@ -26,7 +26,7 @@ jobs:
 
           pacman --noconfirm -Syy archlinux-keyring
           pacman --noconfirm --needed -Sy reflector rsync curl wget git-lfs && \
-          reflector --latest 21 -f 21 --protocol https --download-timeout 55 --sort rate --save /etc/pacman.d/mirrorlist && \
+          reflector --latest 21 -f 21 -a 21 --protocol https --download-timeout 55 --sort rate --save /etc/pacman.d/mirrorlist && \
           pacman --noconfirm --needed -Syy openssh base-devel devtools sudo git lib32-readline lib32-zlib namcap fakeroot audit grep diffutils
           useradd -m -d /home/builder -s /bin/bash -G wheel builder && \
           sed -i 's/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers && \
