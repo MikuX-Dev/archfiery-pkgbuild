@@ -9,7 +9,6 @@ task:
     cpu: 6
     memory: 16GB
 
-build_and_push:
 setup_pacman:
   - rm -rf /etc/pacman.d/gnupg
   - pacman-key --init
