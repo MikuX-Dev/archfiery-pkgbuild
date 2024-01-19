@@ -6,9 +6,9 @@ jobs:
       - image: archlinux:latest
     steps:
       - checkout
-      #- add_ssh_keys:
-          #fingerprints:
-            #- "SHA256:fOxhIyVPDqLpLnU9mEYkd6zQwuZ7Pn2VXmQ+NDw9f8w"
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:fOxhIyVPDqLpLnU9mEYkd6zQwuZ7Pn2VXmQ+NDw9f8w"
       - run:
           name: Setup pacman
           command: |
@@ -34,13 +34,11 @@ jobs:
             cd /home/builder/
             mkdir -p .ssh
             chmod 700 .ssh 
-            echo $KEY > .ssh/id_rsa
-            echo $KEY_PUB > .ssh/id_rsa.pub
-            chmod 600 .ssh/id_rsa 
-            chmod 600 .ssh/id_rsa.pub 
-            echo "Host *" > .ssh/config
-            echo "StrictHostKeyChecking no" >> .ssh/config 
-            chmod 400 .ssh/config
+            #echo $KEY > .ssh/id_rsa
+            #echo $KEY_PUB > .ssh/id_rsa.pub
+            #chmod 600 .ssh/id_rsa 
+            #chmod 600 .ssh/id_rsa.pub 
+            ssh -o "StrictHostKeyChecking no" user@host
             #ssh-keyscan github.com >> .ssh/known_hosts
             #chmod 644 .ssh/known_hosts
       - run:
