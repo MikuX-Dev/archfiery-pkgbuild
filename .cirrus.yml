@@ -10,55 +10,46 @@ task:
     memory: 16GB
 
 build_and_push:
-setup_pacman: |
-  rm -rf /etc/pacman.d/gnupg
-  pacman-key --init
-  pacman-key --populate
-  echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" | tee -a /etc/pacman.conf
-  pacman --noconfirm --needed -Syy reflector rsync curl wget git-lfs openssh base-devel devtools sudo git lib32-readline lib32-zlib namcap fakeroot audit grep diffutils
-  useradd -m -d /home/builder -s /bin/bash -G wheel builder
-  sed -i 's|^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL|%wheel ALL=(ALL:ALL) NOPASSWD: ALL|g' /etc/sudoers
-  echo "builder ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
-  chown -R builder:builder /home/builder/
+setup_pacman:
+  - rm -rf /etc/pacman.d/gnupg
+  - pacman-key --init
+  - pacman-key --populate
+  - echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" | tee -a /etc/pacman.conf
+  - pacman --noconfirm --needed -Syy reflector rsync curl wget git-lfs openssh base-devel devtools sudo git lib32-readline lib32-zlib namcap fakeroot audit grep diffutils
+  - useradd -m -d /home/builder -s /bin/bash -G wheel builder
+  - sed -i 's|^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL|%wheel ALL=(ALL:ALL) NOPASSWD: ALL|g' /etc/sudoers
+  - echo "builder ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
+  - chown -R builder:builder /home/builder/
 
-setup_ssh: |
-  cd /home/builder
-  sudo -u builder bash -c '
-  mkdir -p .ssh
-  echo "$private" > .ssh/id_rsa
-  echo "$public" > .ssh/id_rsa.pub
-  chmod 600 .ssh/id_rsa
-  chmod 600 .ssh/id_rsa.pub
-  ssh-keyscan github.com >> .ssh/known_hosts
-  '
+setup_ssh:
+  - cd /home/builder
+  - sudo -u builder bash -c 'mkdir -p .ssh'
+  - sudo -u builder bash -c 'echo "$private" > .ssh/id_rsa'
+  - sudo -u builder bash -c 'echo "$public" > .ssh/id_rsa.pub'
+  - sudo -u builder bash -c 'chmod 600 .ssh/id_rsa'
+  - sudo -u builder bash -c 'chmod 600 .ssh/id_rsa.pub'
+  - sudo -u builder bash -c 'ssh-keyscan github.com >> .ssh/known_hosts'
 
-Build_pkg: |
-  cd /home/builder
-  sudo -u builder bash -c '
-  ls -la /home/builder
-  pwd
-  find .
-  sudo chown -R builder:builder .*
-  if [ -d "/github" ]; then
-    sudo chown -R builder:builder /github/workspace /github/home
-  fi
-  chown -R builder:builder .*
-  git clone https://aur.archlinux.org/yay-bin.git
-  chown -R builder:builder .*
-  cd yay-bin
-  makepkg -sci --noconfirm --needed --noprogressbar --skippgpcheck
-  cd /home/builder
-  rm -rf yay-bin*
-  git clone git@github.com:MikuX-Dev/archfiery-pkgbuild.git
-  chown -R builder:builder .*
-  cd archfiery-pkgbuild/
-  chmod +x *.sh
-  ./build.sh
-  '
+Build_pkg:
+  - sudo -u builder bash -c 'cd /home/builder'
+  - sudo -u builder bash -c 'ls -la /home/builder'
+  - sudo -u builder bash -c 'pwd'
+  - sudo -u builder bash -c 'find .'
+  - sudo -u builder bash -c 'sudo chown -R builder:builder .*'
+  - sudo -u builder bash -c 'chown -R builder:builder .*''
+  - sudo -u builder bash -c 'git clone https://aur.archlinux.org/yay-bin.git'
+  - sudo -u builder bash -c 'chown -R builder:builder .*'
+  - sudo -u builder bash -c 'cd yay-bin'
+  - sudo -u builder bash -c 'makepkg -sci --noconfirm --needed --noprogressbar --skippgpcheck'
+  - sudo -u builder bash -c 'cd /home/builder'
+  - sudo -u builder bash -c 'rm -rf yay-bin*'
+  - sudo -u builder bash -c 'git clone git@github.com:MikuX-Dev/archfiery-pkgbuild.git'
+  - sudo -u builder bash -c 'chown -R builder:builder .*'
+  - sudo -u builder bash -c 'cd archfiery-pkgbuild/'
+  - sudo -u builder bash -c 'chmod +x *.sh'
+  - sudo -u builder bash -c './build.sh'
 
-Clone Repo and copy pkg and Commit and Push Changes: |
-  cd /home/builder/archfiery-pkgbuild/
-  sudo -u builder bash -c '
-  git clone git@github.com:MikuX-Dev/archfiery-repo.git /home/builder/archfiery-repo
-  ./push.sh
-  '
+Clone Repo and copy pkg and Commit and Push Changes:
+  - sudo -u builder bash -c 'cd /home/builder/archfiery-pkgbuild/'
+  - sudo -u builder bash -c 'git clone git@github.com:MikuX-Dev/archfiery-repo.git /home/builder/archfiery-repo'
+  - sudo -u builder bash -c './push.sh'
