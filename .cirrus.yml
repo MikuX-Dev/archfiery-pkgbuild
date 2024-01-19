@@ -1,0 +1,63 @@
+env:
+  private: "ENCRYPTED[6e039c2e8c579ec9e460d0fa9479b98fb2a5a7b10115aa3f8bb95e3c431088d4a814f14e61ece695cd98f60690adf0b1"
+  public: "ENCRYPTED[ac5f8747b660e9995fb5366beb8f65c974175f61454123a0cae6d4b718c1f62afee02b69fa35c5808b9ec60c174b4552"
+
+task:
+  name: "Setting Up, Syncing, Building and Uploading..."
+  container:
+    image: archlinux:latest
+    cpu: 8
+    memory: 32G
+
+setup_pacman: |
+  rm -rf /etc/pacman.d/gnupg
+  pacman-key --init
+  pacman-key --populate
+  echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" | tee -a /etc/pacman.conf
+  pacman --noconfirm --needed -Syy reflector rsync curl wget git-lfs openssh base-devel devtools sudo git lib32-readline lib32-zlib namcap fakeroot audit grep diffutils
+  useradd -m -d /home/builder -s /bin/bash -G wheel builder
+  sed -i 's|^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL|%wheel ALL=(ALL:ALL) NOPASSWD: ALL|g' /etc/sudoers
+  echo "builder ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
+  chown -R builder:builder /home/builder/
+
+setup_ssh: |
+  cd /home/builder
+  sudo -u builder bash -c '
+  mkdir -p .ssh
+  echo "$private" > .ssh/id_rsa
+  echo "$public" > .ssh/id_rsa.pub
+  chmod 600 .ssh/id_rsa
+  chmod 600 .ssh/id_rsa.pub
+  ssh-keyscan github.com >> .ssh/known_hosts
+  '
+
+Build_pkg: |
+  cd /home/builder
+  sudo -u builder bash -c '
+  ls -la /home/builder
+  pwd
+  find .
+  sudo chown -R builder:builder .*
+  if [ -d "/github" ]; then
+    sudo chown -R builder:builder /github/workspace /github/home
+  fi
+  chown -R builder:builder .*
+  git clone https://aur.archlinux.org/yay-bin.git
+  chown -R builder:builder .*
+  cd yay-bin
+  makepkg -sci --noconfirm --needed --noprogressbar --skippgpcheck
+  cd /home/builder
+  rm -rf yay-bin*
+  git clone git@github.com:MikuX-Dev/archfiery-pkgbuild.git
+  chown -R builder:builder .*
+  cd archfiery-pkgbuild/
+  chmod +x *.sh
+  ./build.sh
+  '
+
+Clone Repo and copy pkg and Commit and Push Changes: |
+  cd /home/builder/archfiery-pkgbuild/
+  sudo -u builder bash -c '
+  git clone git@github.com:MikuX-Dev/archfiery-repo.git /home/builder/archfiery-repo
+  ./push.sh
+  '

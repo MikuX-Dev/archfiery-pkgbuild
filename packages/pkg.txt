@@ -9,7 +9,6 @@ caffeine-ng
 cpu-x
 cpupower-gui
 davinci-resolve
-davinci-resolve-studio
 debtap
 dex2jar
 downgrade
