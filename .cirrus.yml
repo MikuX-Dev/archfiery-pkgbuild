@@ -1,6 +1,6 @@
 env:
-  private: "ENCRYPTED[6e039c2e8c579ec9e460d0fa9479b98fb2a5a7b10115aa3f8bb95e3c431088d4a814f14e61ece695cd98f60690adf0b1"
-  public: "ENCRYPTED[ac5f8747b660e9995fb5366beb8f65c974175f61454123a0cae6d4b718c1f62afee02b69fa35c5808b9ec60c174b4552"
+  PRIVATE: "ENCRYPTED[6e039c2e8c579ec9e460d0fa9479b98fb2a5a7b10115aa3f8bb95e3c431088d4a814f14e61ece695cd98f60690adf0b1"
+  PUBLIC: "ENCRYPTED[ac5f8747b660e9995fb5366beb8f65c974175f61454123a0cae6d4b718c1f62afee02b69fa35c5808b9ec60c174b4552"
 
 task:
   name: "Setting Up, Syncing, Building and Uploading..."
@@ -21,8 +21,8 @@ setup_pacman:
   - chown -R builder:builder /home/builder/
   - cd /home/builder
   - sudo -u builder bash -c 'mkdir -p .ssh'
-  - sudo -u builder bash -c 'echo "$private" > .ssh/id_rsa'
-  - sudo -u builder bash -c 'echo "$public" > .ssh/id_rsa.pub'
+  - sudo -u builder bash -c 'echo "$PRIVATE" > .ssh/id_rsa'
+  - sudo -u builder bash -c 'echo "$PUBLIC" > .ssh/id_rsa.pub'
   - sudo -u builder bash -c 'chmod 600 .ssh/id_rsa'
   - sudo -u builder bash -c 'chmod 600 .ssh/id_rsa.pub'
   - sudo -u builder bash -c 'ssh-keyscan github.com >> .ssh/known_hosts'
