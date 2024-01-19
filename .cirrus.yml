@@ -6,8 +6,8 @@ task:
   name: "Setting Up, Syncing, Building and Uploading..."
   container:
     image: archlinux:latest
-    cpu: 4
-    memory: 18G
+    cpu: 8
+    memory: 32GB
 
 setup_pacman: |
   rm -rf /etc/pacman.d/gnupg
