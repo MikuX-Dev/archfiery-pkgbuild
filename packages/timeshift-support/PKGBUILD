@@ -2,12 +2,12 @@ pkgname=timeshift-support
 pkgver=1
 pkgrel=1
 pkgdesc='Support package for enabling Timeshift with timeshift-autosnap and grub-btrfs'
-arch=(any)
+arch=('any')
 url='https://linux.org'
-license=(GPL3)
-depends=(timeshift timeshift-autosnap grub-btrfs)
-makedepends=(git)
-conflicts=(snapper-support snapper snap-pac)
+license=('GPL3')
+depends=('timeshift' 'timeshift-autosnap' 'grub-btrfs')
+makedepends=('git')
+conflicts=('snapper-support' 'snapper' 'snap-pac')
 install="$pkgname".install
 source=("grub-btrfs-timeshift.service"
 	"grub-btrfs-timeshift.path"

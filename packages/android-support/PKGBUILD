@@ -1,0 +1,10 @@
+pkgname=android-support
+pkgdesc="android support containing all needed packages"
+pkgver=1
+pkgrel=1
+arch=("any")
+url="https://github.com/0x192/universal-android-debloater"
+license=("GPL")
+depends=('android-sdk' 'android-ndk' 'android-sdk-build-tools' 'aosp-devel' 'lineageos-devel' 'xml2')
+optdepends=("universal-android-debloater-bin: Cross-platform GUI written in Rust using ADB to debloat non-rooted Android devices."
+  "android-apktool-bin: A tool for reverse engineering Android .apk files")
