@@ -34,6 +34,7 @@ jobs:
             echo "$SSH_PRIVATE_KEY" > .ssh/id_rsa
             echo "$SSH_PRIVATE_KEY_PUB" > .ssh/id_rsa.pub
             chmod 600 .ssh/id_rsa
+            chmod 600 .ssh/id_rsa.pub
             ssh-keyscan github.com >> .ssh/known_hosts
             '
       - run:
