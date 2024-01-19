@@ -6,8 +6,8 @@ task:
   name: "Setting Up, Syncing, Building and Uploading..."
   container:
     image: archlinux:latest
-    # cpu: 6
-    # memory: 16GB
+    cpu: 6
+    memory: 16GB
 
 build_and_push:
 setup_pacman:
@@ -20,8 +20,6 @@ setup_pacman:
   - echo -e "%wheel ALL=(ALL:ALL) NOPASSWD: ALL" | tee -a /etc/sudoers
   - echo "builder ALL=(ALL) NOPASSWD: ALL" | tee -a /etc/sudoers
   - chown -R builder:builder /home/builder/
-
-setup_ssh:
   - cd /home/builder
   - sudo -u builder bash -c 'mkdir -p .ssh'
   - sudo -u builder bash -c 'echo "$private" > .ssh/id_rsa'
@@ -49,7 +47,6 @@ Build_pkg:
   - sudo -u builder bash -c 'chmod +x *.sh'
   - sudo -u builder bash -c './build.sh'
 
-Clone Repo and copy pkg and Commit and Push Changes:
   - sudo -u builder bash -c 'cd /home/builder/archfiery-pkgbuild/'
   - sudo -u builder bash -c 'git clone git@github.com:MikuX-Dev/archfiery-repo.git /home/builder/archfiery-repo'
   - sudo -u builder bash -c './push.sh'
