@@ -3,6 +3,7 @@ env:
   public: "ENCRYPTED[ac5f8747b660e9995fb5366beb8f65c974175f61454123a0cae6d4b718c1f62afee02b69fa35c5808b9ec60c174b4552"
 
 task:
+  use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
   name: "Setting Up, Syncing, Building and Uploading..."
   container:
     image: archlinux:latest
