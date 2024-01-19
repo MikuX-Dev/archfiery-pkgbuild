@@ -32,11 +32,11 @@ jobs:
           name: Set up SSH key
           command: |
             cd /home/builder/
-            sudo -u builder bash -c '
             mkdir -p .ssh
+            chmod 700 .ssh
             chmod 600 .ssh/circleci_rsa
             ssh-keyscan github.com >> .ssh/known_hosts
-            '
+            chmod 644 ~/.ssh/known_hosts
       - run:
           name: Build pkg
           command: |
@@ -46,15 +46,14 @@ jobs:
             pwd
             find .
             sudo chown -R builder:builder .*
-            chown -R builder:builder .*
             git clone https://aur.archlinux.org/yay-bin.git
-            chown -R builder:builder .*
+            sudo chown -R builder:builder .*
             cd yay-bin
             makepkg -sci --noconfirm --needed --noprogressbar --skippgpcheck
             cd /home/builder
             rm -rf yay-bin*
             git clone git@github.com:MikuX-Dev/archfiery-pkgbuild.git
-            chown -R builder:builder .*
+            sudo chown -R builder:builder .*
             cd archfiery-pkgbuild/
             chmod +x *.sh
             ./build.sh
