@@ -9,7 +9,7 @@ jobs:
       - image: archlinux:latest
     steps:
       - checkout
-      - ssh/add-ssh-keys:
+      - add_ssh_keys:
           fingerprints:
             - "SHA256:Fa8m568NofsHecs/RaJ7RVQBMmp+bzLwMWj1pVg9K6M"
       - run:
