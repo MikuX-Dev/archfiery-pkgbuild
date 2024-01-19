@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  ssh: circleci/ssh@1.0.0
+
 jobs:
   build:
     docker:
