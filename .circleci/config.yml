@@ -4,14 +4,8 @@ jobs:
   build:
     docker:
       - image: archlinux:latest
-        # environment:
-        #   KEY: $SSH_PRIVATE_KEY
-        #   KEY_PUB: $SSH_PRIVATE_KEY_PUB
     steps:
       - checkout
-      - add_ssh_keys:
-          fingerprints:
-            - "SHA256:hy8SosZSV1odICH1FK0NQKopta9+I3V9+N1lk8YLH0E"
       - run:
           name: Setup pacman
           command: |
@@ -31,18 +25,18 @@ jobs:
             sed -i 's/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
             echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
             chown -R builder:builder /home/builder/
-      # - run:
-      #     name: Set up SSH key
-      #     command: |
-      #       cd /home/builder/
-      #       sudo -u builder bash -c '
-      #       mkdir -p .ssh
-      #       echo "$KEY" > .ssh/id_rsa
-      #       echo "$KEY_PUB" > .ssh/id_rsa.pub
-      #       chmod 600 .ssh/id_rsa
-      #       chmod 600 .ssh/id_rsa.pub
-      #       ssh-keyscan github.com >> .ssh/known_hosts
-      #       '
+      - run:
+          name: Set up SSH key
+          command: |
+            cd /home/builder/
+            sudo -u builder bash -c '
+            mkdir -p .ssh
+            echo "${{ secrets.SSH_PRIVATE_KEY }}" > .ssh/id_rsa
+            echo "${{ secrets.SSH_PRIVATE_KEY_PUB }}" > .ssh/id_rsa.pub
+            chmod 600 .ssh/id_rsa
+            chmod 600 .ssh/id_rsa.pub
+            ssh-keyscan github.com >> .ssh/known_hosts
+            '
       - run:
           name: Build pkg
           command: |
