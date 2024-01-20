@@ -5,7 +5,7 @@ jobs:
     docker:
       - image: archlinux:latest
     steps:
-      # - checkout
+      - checkout
       - run:
           name: Setup pacman
           command: |
@@ -37,6 +37,7 @@ jobs:
             echo $KEY_PUB > .ssh/id_ed25519.pub
             chmod 600 .ssh/id_ed25519
             chmod 600 .ssh/id_ed25519.pub
+            eval $(ssh-agent)
             ssh-add .ssh/id_ed25519
             ssh-keyscan github.com >> .ssh/known_hosts
             chmod 644 .ssh/known_hosts
