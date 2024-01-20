@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2035
+# shellcheck disable=SC1091
 
-# Use more efficient way to loop through directories
-shopt -s nullglob dotglob
+# Script name: build.sh
+# Description: Script for automating pkgbuild on "ci".
+# Contributors: MikuX-Dev
 
 # Set with the flags "-e", "-u","-o pipefail" cause the script to fail
-# if certain things happen, which is a good thing. Otherwise, we can
+# if certain things happen, which is a good thing.  Otherwise, we can
 # get hidden bugs that are hard to discover.
 set -euo pipefail
 
@@ -15,8 +18,8 @@ PKGSTXT="$HOME/archfiery-pkgbuild/packages"
 YAYCACHE="$HOME/.cache/yay"
 LOCALPKG="$HOME/archfiery-pkgbuild/packages"
 
-# Use fd instead of find
-TXT_FILE=$(fd --type f --max-depth 1 --full-path --extension txt "$PKGSTXT")
+# Find the *.txt file in $PKGSTXT
+TXT_FILE=$(find "$PKGSTXT" -maxdepth 1 -type f -name "*.txt" | head -n 1)
 
 # Check if a *.txt file is found
 if [ -z "$TXT_FILE" ]; then
@@ -29,19 +32,25 @@ un_comment_jmake() {
   sudo sed -i 's|^#BUILDDIR.*|BUILDDIR=/tmp/makepkg|g' /etc/makepkg.conf
 }
 
+# Directories to be used within the script
+declare -a dirs=(
+  "$OUTPUT_DIR"
+  "$AURBUILD"
+  "$HOME/output-large"
+  "$HOME/output-small"
+)
+
 # Function to create directories
 create_directories() {
   mkdir -p "${dirs[@]}"
 }
 
-# Avoid repeated pushd/popd
 clone_pkg() {
-  cd "$AURBUILD"
-  for dir in */; do
-    cd "$dir"
+  pushd "$AURBUILD"
+  while IFS= read -r package; do
     git clone https://aur.archlinux.org/"$package"
-  done
-  cd -
+  done <"$TXT_FILE"
+  popd
 }
 
 # Function to check if a package is in the official repositories
@@ -66,44 +75,58 @@ install_aur_deps() {
 
 iad() {
   clone_pkg
+
   for dir in "$AURBUILD"/*/; do
-    cd "$dir"
+    pushd "$dir"
     install_aur_deps
-    cd -
+    popd
   done
 }
 
-# Parallelize building packages
 build_aur_packages() {
-  local -a pkgdirs=("$AURBUILD"/*/)
-
-  # Build in parallel
-  printf '%s\0' "${pkgdirs[@]}" | xargs -0 -n1 -P$(nproc) -I{} makepkg --clean --needed --noconfirm --skippgpcheck --skipchecksums --skipinteg --noprogressbar {}
+  for dir in "$AURBUILD"/*/; do
+    pushd "$dir"
+    makepkg --clean --needed --nodeps --noconfirm --skippgpcheck --skipchecksums --skipinteg --noprogressbar
+    popd
+  done
 }
 
 build_local_packages() {
   for dir in "$LOCALPKG"/*/; do
-    cd "$dir"
+    pushd "$dir"
     makepkg --clean --needed --nodeps --noconfirm --skippgpcheck --skipchecksums --skipinteg --noprogressbar
-    cd -
+    popd
   done
 }
 
 copy_aur_deps() {
-  cp -r "$YAYCACHE"/*/*.pkg.tar.* "$OUTPUT_DIR"
+  for dir in "$YAYCACHE"/*/; do
+    cp -r "$dir"/*.pkg.tar.* "$OUTPUT_DIR"
+  done
 }
 
 copy_build_pkg() {
-  cp -r "$AURBUILD"/*/*.pkg.tar.* "$OUTPUT_DIR"
+  for dir in "$AURBUILD"/*/; do
+    cp -r "$dir"/*.pkg.tar.* "$OUTPUT_DIR"
+  done
 }
 
-# Use more efficient mv
+copy_build_local() {
+  for dir in "$LOCALPKG"/*/; do
+    cp -r "$dir"/*.pkg.tar.* "$OUTPUT_DIR"
+  done
+}
+
+# Function to categorize packages based on size
 categorize_packages() {
+  local input_dir="$1"
   local large_output_dir="$HOME/output-large"
   local small_output_dir="$HOME/output-small"
 
-  fd --type f --extension pkg.tar.* "$1" | while IFS= read -r pkg_file; do
-    if [[ $(du -m "$pkg_file" | cut -f1) -gt 100 ]]; then
+  for pkg_file in "$input_dir"/*.pkg.tar.*; do
+    local size
+    size=$(du -m "$pkg_file" | cut -f1)
+    if ((size > 100)); then
       mv -f "$pkg_file" "$large_output_dir"
     else
       mv -f "$pkg_file" "$small_output_dir"
