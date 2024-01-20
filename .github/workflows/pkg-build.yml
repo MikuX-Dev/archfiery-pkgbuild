@@ -34,7 +34,7 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY_PUB }}" > .ssh/id_rsa.pub
           chmod 600 .ssh/id_rsa
           chmod 600 .ssh/id_rsa.pub
-          ssh-add ~/.ssh/id_rsa
+          ssh-add -l
           ssh-keyscan github.com >> .ssh/known_hosts
           '
       - run: |
