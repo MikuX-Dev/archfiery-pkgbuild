@@ -144,13 +144,13 @@ main() {
   un_comment_jmake
   {
     iad 
-  } &> "$HOME"/log/iad.txt
+  } &> "$HOME/log/iad.txt"
   {
     build_aur_packages
-  } &> "$HOME"/log/build_aur_packages.txt
+  } &> "$HOME/log/build_aur_packages.txt"
   {
     build_local_packages
-  } &> "$HOME"/log/build_local_packages.txt
+  } &> "$HOME/log/build_local_packages.txt"
   copy_aur_deps
   copy_build_pkg
   categorize_packages "$OUTPUT_DIR"
