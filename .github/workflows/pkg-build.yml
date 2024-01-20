@@ -30,14 +30,15 @@ jobs:
           cd /home/builder
           mkdir -p .ssh
           echo "${{ secrets.KEY }}" > .ssh/id_ed
-          # echo "${{ secrets.KEY_PUB }}" > .ssh/id_ed.pub
-          chmod 600 .ssh/id_ed
+          echo "${{ secrets.KEY_PUB }}" > .ssh/id_ed.pub
+          echo "${{ secrets.HOSTS }}" > .ssh/known_hosts
+          # chmod 600 .ssh/id_ed
           # chmod 600 .ssh/id_ed.pub
-          eval $(ssh-agent -s)
-          cat .ssh/id_ed
-          ssh-add .ssh/id_ed
-          ssh-add -l
-          ssh-keyscan github.com >> .ssh/known_hosts
+          # eval $(ssh-agent -s)
+          # cat .ssh/id_ed
+          # ssh-add .ssh/id_ed
+          # ssh-add -l
+          # ssh-keyscan github.com >> .ssh/known_hosts
       - run: |
           sudo -u builder bash -c '
           cd /home/builder
