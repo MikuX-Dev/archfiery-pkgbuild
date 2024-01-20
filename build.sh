@@ -38,7 +38,7 @@ declare -a dirs=(
   "$AURBUILD"
   "$HOME/output-large"
   "$HOME/output-small"
-  "$HOME/log/"
+  # "$HOME/log/"
 )
 
 # Function to create directories
@@ -77,8 +77,7 @@ install_aur_deps() {
 }
 
 iad() {
-  clone_pkg 
-  clear
+  clone_pkg
 
   for dir in "$AURBUILD"/*/; do
     pushd "$dir"
