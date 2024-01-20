@@ -76,3 +76,4 @@ jobs:
           git clone git@github.com:MikuX-Dev/archfiery-repo.git /home/builder/archfiery-repo
           ./push.sh
           '
+
