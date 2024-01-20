@@ -25,7 +25,7 @@ jobs:
             echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" | tee -a /etc/pacman.conf; \
           fi
 
-          pacman --noconfirm -Syyu reflector rsync curl wget git-lfs openssh base-devel devtools sudo git lib32-readline lib32-zlib namcap fakeroot audit grep diffutils
+          pacman --noconfirm -Syyu reflector rsync curl wget git-lfs openssh base-devel devtools sudo git lib32-readline lib32-zlib namcap fakeroot audit grep diffutils parallel
 
           useradd -m -d /home/builder -s /bin/bash -G wheel builder
           sed -i 's/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers

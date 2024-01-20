@@ -8,7 +8,8 @@ btrfs-assistant
 caffeine-ng
 cpu-x
 cpupower-gui
-davinci-resolve
+# davinci-resolve
+# davinci-resolve-studio
 debtap
 dex2jar
 downgrade
@@ -40,8 +41,8 @@ paru-bin
 pomatez
 powershell-bin
 qbittorrent-enhanced
-simplescreenrecorder-bin
 signal-cli
+simplescreenrecorder-bin
 slack-desktop
 snapper-gui-git
 spotify

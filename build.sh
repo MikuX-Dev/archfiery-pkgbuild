@@ -48,6 +48,8 @@ create_directories() {
 clone_pkg() {
   pushd "$AURBUILD"
   while IFS= read -r package; do
+    # Skip lines starting with #
+    [[ $package =~ ^# ]] && continue
     git clone https://aur.archlinux.org/"$package"
   done <"$TXT_FILE"
   popd
@@ -83,20 +85,21 @@ iad() {
   done
 }
 
+# Function to build packages in parallel
+build_packages_parallel() {
+  local package_dirs=("$@")
+
+  parallel --bar ::: "makepkg --clean --needed --nodeps --noconfirm --skippgpcheck --skipchecksums --skipinteg --noprogressbar" ::: "${package_dirs[@]}"
+}
+
 build_aur_packages() {
-  for dir in "$AURBUILD"/*/; do
-    pushd "$dir"
-    makepkg --clean --needed --nodeps --noconfirm --skippgpcheck --skipchecksums --skipinteg --noprogressbar
-    popd
-  done
+  local package_dirs=("$AURBUILD"/*/)
+  build_packages_parallel "${package_dirs[@]}"
 }
 
 build_local_packages() {
-  for dir in "$LOCALPKG"/*/; do
-    pushd "$dir"
-    makepkg --clean --needed --nodeps --noconfirm --skippgpcheck --skipchecksums --skipinteg --noprogressbar
-    popd
-  done
+  local package_dirs=("$LOCALPKG"/*/)
+  build_packages_parallel "${package_dirs[@]}"
 }
 
 copy_aur_deps() {
