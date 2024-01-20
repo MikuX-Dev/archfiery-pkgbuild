@@ -69,6 +69,7 @@ jobs:
             sudo -u builder bash -c '
             cd /home/builder
             git clone git@github.com:MikuX-Dev/archfiery-repo.git /home/builder/archfiery-repo
+            sudo chown -R builder:builder .*
             ./push.sh
             '
 
