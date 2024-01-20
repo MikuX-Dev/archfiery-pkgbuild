@@ -1,14 +1,9 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2035
-# shellcheck disable=SC1091
-
 # Script name: build.sh
 # Description: Script for automating pkgbuild on "ci".
 # Contributors: MikuX-Dev
 
-# Set with the flags "-e", "-u","-o pipefail" cause the script to fail
-# if certain things happen, which is a good thing.  Otherwise, we can
-# get hidden bugs that are hard to discover.
+# Set strict shell options for error handling
 set -euo pipefail
 
 # Default values
@@ -27,35 +22,27 @@ if [ -z "$TXT_FILE" ]; then
   exit 1
 fi
 
+# Function to uncomment MAKEFLAGS in makepkg.conf
 un_comment_jmake() {
   sudo sed -i 's|^#MAKEFLAGS.*|MAKEFLAGS="-j$(nproc)"|g' /etc/makepkg.conf
   sudo sed -i 's|^#BUILDDIR.*|BUILDDIR=/tmp/makepkg|g' /etc/makepkg.conf
 }
 
-# Directories to be used within the script
-declare -a dirs=(
-  "$OUTPUT_DIR"
-  "$AURBUILD"
-  "$HOME/output-large"
-  "$HOME/output-small"
-)
-
 # Function to create directories
 create_directories() {
-  mkdir -p "${dirs[@]}"
+  mkdir -p "$OUTPUT_DIR" "$AURBUILD" "$HOME/output-large" "$HOME/output-small"
 }
 
+# Function to clone AUR packages
 clone_pkg() {
   pushd "$AURBUILD"
-  while IFS= read -r package; do
-    git clone https://aur.archlinux.org/"$package"
-  done <"$TXT_FILE"
+  xargs -a "$TXT_FILE" -I {} git clone https://aur.archlinux.org/{}
   popd
 }
 
 # Function to check if a package is in the official repositories
 is_in_repos() {
-  pacman -Ss "$1" >/dev/null 2>&1
+  pacman -Ss "$1" &>/dev/null
 }
 
 # Function to install AUR dependencies
@@ -73,48 +60,35 @@ install_aur_deps() {
   done
 }
 
-iad() {
-  clone_pkg
-
+# Function to iterate and apply a function on AUR packages
+iterate_aur_packages() {
+  local function_name="$1"
   for dir in "$AURBUILD"/*/; do
     pushd "$dir"
-    install_aur_deps
+    $function_name
     popd
   done
 }
 
+# Function to build AUR packages
 build_aur_packages() {
-  for dir in "$AURBUILD"/*/; do
-    pushd "$dir"
-    makepkg --clean --needed --nodeps --noconfirm --skippgpcheck --skipchecksums --skipinteg --noprogressbar
-    popd
-  done
+  makepkg_args=('--clean' '--needed' '--nodeps' '--noconfirm' '--skippgpcheck' '--skipchecksums' '--skipinteg' '--noprogressbar')
+  iterate_aur_packages 'makepkg' "${makepkg_args[@]}"
 }
 
+# Function to build local packages
 build_local_packages() {
-  for dir in "$LOCALPKG"/*/; do
-    pushd "$dir"
-    makepkg --clean --needed --nodeps --noconfirm --skippgpcheck --skipchecksums --skipinteg --noprogressbar
-    popd
-  done
+  iterate_aur_packages 'makepkg' '--clean --needed --nodeps --noconfirm --skippgpcheck --skipchecksums --skipinteg --noprogressbar'
 }
 
+# Function to copy AUR dependencies
 copy_aur_deps() {
-  for dir in "$YAYCACHE"/*/; do
-    cp -r "$dir"/*.pkg.tar.* "$OUTPUT_DIR"
-  done
+  find "$YAYCACHE" -mindepth 1 -maxdepth 1 -type d -exec cp -r {}/. "$OUTPUT_DIR" \;
 }
 
+# Function to copy built packages
 copy_build_pkg() {
-  for dir in "$AURBUILD"/*/; do
-    cp -r "$dir"/*.pkg.tar.* "$OUTPUT_DIR"
-  done
-}
-
-copy_build_local() {
-  for dir in "$LOCALPKG"/*/; do
-    cp -r "$dir"/*.pkg.tar.* "$OUTPUT_DIR"
-  done
+  iterate_aur_packages "cp -r *.pkg.tar.* '$OUTPUT_DIR'"
 }
 
 # Function to categorize packages based on size
@@ -123,14 +97,8 @@ categorize_packages() {
   local large_output_dir="$HOME/output-large"
   local small_output_dir="$HOME/output-small"
 
-  for pkg_file in "$input_dir"/*.pkg.tar.*; do
-    local size
-    size=$(du -m "$pkg_file" | cut -f1)
-    if ((size > 100)); then
-      mv -f "$pkg_file" "$large_output_dir"
-    else
-      mv -f "$pkg_file" "$small_output_dir"
-    fi
+  find "$input_dir" -name '*.pkg.tar.*' -exec du -m {} + | while read -r size pkg_file; do
+    ((size > 100)) && mv -f "$pkg_file" "$large_output_dir" || mv -f "$pkg_file" "$small_output_dir"
   done
 }
 
@@ -138,7 +106,8 @@ categorize_packages() {
 main() {
   create_directories
   un_comment_jmake
-  iad
+  clone_pkg
+  install_aur_deps
   build_aur_packages
   build_local_packages
   copy_aur_deps
