@@ -66,6 +66,11 @@ jobs:
           chmod +x *.sh
           ./build.sh
           '
+      - uses: actions/upload-artifact@v4
+        with:
+           name: logs
+           path: /home/builder/log/*.txt
+           compression-level: 9
       - name: Clone Repo and copy pkg and Commit and Push Changes
         run: |
           cd /home/builder/archfiery-pkgbuild/
