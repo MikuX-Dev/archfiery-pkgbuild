@@ -27,6 +27,7 @@ jobs:
           chown -R builder:builder /home/builder/
       - name: Import SSH key
         run: |
+          sudo -u builder bash -c '
           cd /home/builder
           mkdir -p .ssh
           echo "${{ secrets.KEY }}" > .ssh/id_ed
@@ -39,6 +40,7 @@ jobs:
           ssh-add .ssh/id_ed
           echo "SSH Agent status:"
           ssh-add -l
+          '
       - run: |
           sudo -u builder bash -c '
           cd /home/builder
