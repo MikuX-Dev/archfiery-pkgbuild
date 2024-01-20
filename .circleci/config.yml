@@ -49,8 +49,8 @@ jobs:
             # chmod 600 .ssh/id_ed25519.pub
             eval $(ssh-agent)
             # ssh-add .ssh/id_ed25519
-            ssh-keyscan github.com >> .ssh/known_hosts
-            chmod 644 .ssh/known_hosts
+            # ssh-keyscan github.com >> .ssh/known_hosts
+            # chmod 644 .ssh/known_hosts
             '
       - run:
           name: Build pkg
