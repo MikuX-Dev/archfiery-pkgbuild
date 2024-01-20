@@ -25,16 +25,22 @@ jobs:
           sed -i 's/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
           echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
           chown -R builder:builder /home/builder/
-      - name: Install SSH key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.KEY }}
-          name: id_ed
-          known_hosts: ${{ secrets.HOSTS }}
-          config: |
-            # GitHub
-            Host github.com
-              IdentityFile .ssh/id_ed
+      - name: Import SSH key
+        run: |
+          sudo -u builder bash -c '
+          cd /home/builder
+          mkdir -p .ssh
+          echo "${{ secrets.KEY }}" > .ssh/id_ed
+          echo "${{ secrets.KEY_PUB }}" > .ssh/id_ed.pub
+          echo "${{ secrets.HOSTS }}" > .ssh/known_hosts
+          chmod 600 .ssh/id_ed
+          chmod 600 .ssh/id_ed.pub
+          ssh -T git@github.com
+          eval $(ssh-agent -s)
+          ssh-add .ssh/id_ed
+          ssh-add -l
+          ssh-keyscan github.com >> .ssh/known_hosts
+          '
       - run: |
           sudo -u builder bash -c '
           cd /home/builder
