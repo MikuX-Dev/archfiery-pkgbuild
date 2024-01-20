@@ -33,11 +33,11 @@ jobs:
             mkdir -p .ssh
             chmod 700 .ssh
             echo -e "Host *\n  StrictHostKeyChecking no\n  UserKnownHostsFile=/dev/null" > .ssh/config
-            echo $KEY > .ssh/id_rsa
-            echo $KEY_PUB > .ssh/id_rsa.pub
-            chmod 600 .ssh/id_rsa
-            chmod 600 .ssh/id_rsa.pub
-            ssh-add .ssh/id_rsa
+            echo $KEY > .ssh/id_ed25519
+            echo $KEY_PUB > .ssh/id_ed25519.pub
+            chmod 600 .ssh/id_ed25519
+            chmod 600 .ssh/id_ed25519.pub
+            ssh-add .ssh/id_ed25519
             ssh-keyscan github.com >> .ssh/known_hosts
             chmod 644 .ssh/known_hosts
             '
