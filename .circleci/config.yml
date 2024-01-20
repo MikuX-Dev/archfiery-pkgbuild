@@ -26,6 +26,12 @@ jobs:
             echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
             chown -R builder:builder /home/builder/
       - run:
+          name: Checking
+          command: |
+            ls -la /home/builder
+            pwd
+            find .
+      - run:
           name: Set up SSH key
           command: |
             sudo -u builder bash -c '
