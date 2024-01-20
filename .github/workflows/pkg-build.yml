@@ -16,11 +16,17 @@ jobs:
         uses: actions/checkout@v4
       - name: setup pacman
         run: |
-          rm -rf /etc/pacman.d/gnupg
           pacman-key --init
           pacman-key --populate
-          echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
-          pacman --noconfirm --needed -Syy reflector rsync curl wget git-lfs openssh base-devel devtools sudo git lib32-readline lib32-zlib namcap fakeroot audit grep diffutils
+
+          if grep -q "\[multilib\]" /etc/pacman.conf; then \
+            sed -i '/^\[multilib\]/,/Include = \/etc\/pacman.d\/mirrorlist/ s/^#//' /etc/pacman.conf; \
+          else \
+            echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" | tee -a /etc/pacman.conf; \
+          fi
+
+          pacman --noconfirm -Syyu reflector rsync curl wget git-lfs openssh base-devel devtools sudo git lib32-readline lib32-zlib namcap fakeroot audit grep diffutils
+
           useradd -m -d /home/builder -s /bin/bash -G wheel builder
           sed -i 's/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
           echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
@@ -35,10 +41,11 @@ jobs:
           chmod 600 .ssh/id_rsa
           chmod 600 .ssh/id_rsa.pub
           ssh-keyscan github.com >> .ssh/known_hosts
+          '
       - name: Build pkg
         run: |
-          sudo -u builder bash -c '
           cd /home/builder
+          sudo -u builder bash -c '
           ls -la /home/builder
           pwd
           find .
@@ -46,21 +53,23 @@ jobs:
           if [ -d "/github" ]; then
             sudo chown -R builder:builder /github/workspace /github/home
           fi
+          chown -R builder:builder .*
           git clone https://aur.archlinux.org/yay-bin.git
+          chown -R builder:builder .*
           cd yay-bin
           makepkg -sci --noconfirm --needed --noprogressbar --skippgpcheck
           cd /home/builder
           rm -rf yay-bin*
           git clone git@github.com:MikuX-Dev/archfiery-pkgbuild.git
+          chown -R builder:builder .*
           cd archfiery-pkgbuild/
           chmod +x *.sh
           ./build.sh
           '
       - name: Clone Repo and copy pkg and Commit and Push Changes
         run: |
-          sudo -u builder bash -c '
           cd /home/builder/archfiery-pkgbuild/
+          sudo -u builder bash -c '
           git clone git@github.com:MikuX-Dev/archfiery-repo.git /home/builder/archfiery-repo
           ./push.sh
           '
-
