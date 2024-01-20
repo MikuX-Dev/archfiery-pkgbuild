@@ -9,6 +9,7 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "SHA256:ljtrIipkhebw3BFOoSXyMpZo2Z2AOJdlQcCllb4HPCo"
+            - "SHA256:AkaOg4V2yu529dnzCUEO2KoSdqsTmTlORVyJ2jRJ80E"
       - run:
           name: Setup pacman
           command: |
