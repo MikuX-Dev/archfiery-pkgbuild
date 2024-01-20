@@ -6,10 +6,10 @@ jobs:
       - image: archlinux:latest
     steps:
       - checkout
-      - add_ssh_keys:
-          fingerprints:
+      # - add_ssh_keys:
+          # fingerprints:
             # - "SHA256:ljtrIipkhebw3BFOoSXyMpZo2Z2AOJdlQcCllb4HPCo"
-            - "SHA256:ljtrIipkhebw3BFOoSXyMpZo2Z2AOJdlQcCllb4HPCo"
+            # - "SHA256:ljtrIipkhebw3BFOoSXyMpZo2Z2AOJdlQcCllb4HPCo"
       - run:
           name: Setup pacman
           command: |
