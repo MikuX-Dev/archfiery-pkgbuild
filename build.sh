@@ -77,7 +77,8 @@ install_aur_deps() {
 }
 
 iad() {
-  clone_pkg
+  clone_pkg 
+  clear
 
   for dir in "$AURBUILD"/*/; do
     pushd "$dir"
@@ -142,15 +143,9 @@ categorize_packages() {
 main() {
   create_directories
   un_comment_jmake
-  {
-    iad 
-  } &> "$HOME/log/iad.txt"
-  {
-    build_aur_packages
-  } &> "$HOME/log/build_aur_packages.txt"
-  {
-    build_local_packages
-  } &> "$HOME/log/build_local_packages.txt"
+  iad
+  build_aur_packages
+  build_local_packages
   copy_aur_deps
   copy_build_pkg
   categorize_packages "$OUTPUT_DIR"
