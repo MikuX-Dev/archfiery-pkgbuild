@@ -27,7 +27,6 @@ jobs:
           chown -R builder:builder /home/builder/
       - name: Import SSH key
         run: |
-          sudo -u builder bash -c '
           cd /home/builder
           mkdir -p .ssh
           echo "${{ secrets.KEY }}" > .ssh/id_ed
@@ -35,13 +34,10 @@ jobs:
           chmod 600 .ssh/id_ed
           # chmod 600 .ssh/id_ed.pub
           eval $(ssh-agent -s)
-          echo "Key contents:"
           cat .ssh/id_ed
           ssh-add .ssh/id_ed
-          echo "SSH Agent status:"
           ssh-add -l
           ssh-keyscan github.com >> .ssh/known_hosts
-          '
       - run: |
           sudo -u builder bash -c '
           cd /home/builder
@@ -62,6 +58,7 @@ jobs:
         run: |
           sudo -u builder bash -c '
           cd /home/builder
+          sudo chown -R builder:builder .*
           git clone https://aur.archlinux.org/yay-bin.git
           cd yay-bin
           makepkg -sci --noconfirm --needed --noprogressbar --skippgpcheck
