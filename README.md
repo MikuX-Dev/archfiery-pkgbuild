@@ -1,7 +1,7 @@
 # archfiery-pkgbuild
 
 ### Status
-[![CircleCI](https://dl.circleci.com/status-badge/img/gh/MikuX-Dev/archfiery-pkgbuild/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/MikuX-Dev/archfiery-pkgbuild/tree/main)
+![Build and push](https://github.com/MikuX-Dev/archfiery-pkgbuild/actions/workflows/pkg-build.yml)
 
 ### Automatic repository 
 - Automatically manages an Arch Linux personal repository

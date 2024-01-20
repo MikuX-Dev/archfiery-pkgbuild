@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
-# Script name: build.sh
-# Description: Script for automating pkgbuild on "ci".
-# Contributors: MikuX-Dev
 
-# Set strict shell options for error handling
+# Use more efficient way to loop through directories
+shopt -s nullglob dotglob
+
+# Set with the flags "-e", "-u","-o pipefail" cause the script to fail
+# if certain things happen, which is a good thing. Otherwise, we can
+# get hidden bugs that are hard to discover.
 set -euo pipefail
 
 # Default values
@@ -13,8 +15,8 @@ PKGSTXT="$HOME/archfiery-pkgbuild/packages"
 YAYCACHE="$HOME/.cache/yay"
 LOCALPKG="$HOME/archfiery-pkgbuild/packages"
 
-# Find the *.txt file in $PKGSTXT
-TXT_FILE=$(find "$PKGSTXT" -maxdepth 1 -type f -name "*.txt" | head -n 1)
+# Use fd instead of find
+TXT_FILE=$(fd --type f --max-depth 1 --full-path --extension txt "$PKGSTXT")
 
 # Check if a *.txt file is found
 if [ -z "$TXT_FILE" ]; then
@@ -22,7 +24,6 @@ if [ -z "$TXT_FILE" ]; then
   exit 1
 fi
 
-# Function to uncomment MAKEFLAGS in makepkg.conf
 un_comment_jmake() {
   sudo sed -i 's|^#MAKEFLAGS.*|MAKEFLAGS="-j$(nproc)"|g' /etc/makepkg.conf
   sudo sed -i 's|^#BUILDDIR.*|BUILDDIR=/tmp/makepkg|g' /etc/makepkg.conf
@@ -30,19 +31,22 @@ un_comment_jmake() {
 
 # Function to create directories
 create_directories() {
-  mkdir -p "$OUTPUT_DIR" "$AURBUILD" "$HOME/output-large" "$HOME/output-small"
+  mkdir -p "${dirs[@]}"
 }
 
-# Function to clone AUR packages
+# Avoid repeated pushd/popd
 clone_pkg() {
-  pushd "$AURBUILD"
-  xargs -a "$TXT_FILE" -I {} git clone https://aur.archlinux.org/{}
-  popd
+  cd "$AURBUILD"
+  for dir in */; do
+    cd "$dir"
+    git clone https://aur.archlinux.org/"$package"
+  done
+  cd -
 }
 
 # Function to check if a package is in the official repositories
 is_in_repos() {
-  pacman -Ss "$1" &>/dev/null
+  pacman -Ss "$1" >/dev/null 2>&1
 }
 
 # Function to install AUR dependencies
@@ -60,45 +64,50 @@ install_aur_deps() {
   done
 }
 
-# Function to iterate and apply a function on AUR packages
-iterate_aur_packages() {
-  local function_name="$1"
+iad() {
+  clone_pkg
   for dir in "$AURBUILD"/*/; do
-    pushd "$dir"
-    $function_name
-    popd
+    cd "$dir"
+    install_aur_deps
+    cd -
   done
 }
 
-# Function to build AUR packages
+# Parallelize building packages
 build_aur_packages() {
-  makepkg_args=('--clean' '--needed' '--nodeps' '--noconfirm' '--skippgpcheck' '--skipchecksums' '--skipinteg' '--noprogressbar')
-  iterate_aur_packages 'makepkg' "${makepkg_args[@]}"
+  local -a pkgdirs=("$AURBUILD"/*/)
+
+  # Build in parallel
+  printf '%s\0' "${pkgdirs[@]}" | xargs -0 -n1 -P$(nproc) -I{} makepkg --clean --needed --noconfirm --skippgpcheck --skipchecksums --skipinteg --noprogressbar {}
 }
 
-# Function to build local packages
 build_local_packages() {
-  iterate_aur_packages 'makepkg' '--clean --needed --nodeps --noconfirm --skippgpcheck --skipchecksums --skipinteg --noprogressbar'
+  for dir in "$LOCALPKG"/*/; do
+    cd "$dir"
+    makepkg --clean --needed --nodeps --noconfirm --skippgpcheck --skipchecksums --skipinteg --noprogressbar
+    cd -
+  done
 }
 
-# Function to copy AUR dependencies
 copy_aur_deps() {
-  find "$YAYCACHE" -mindepth 1 -maxdepth 1 -type d -exec cp -r {}/. "$OUTPUT_DIR" \;
+  cp -r "$YAYCACHE"/*/*.pkg.tar.* "$OUTPUT_DIR"
 }
 
-# Function to copy built packages
 copy_build_pkg() {
-  iterate_aur_packages "cp -r *.pkg.tar.* '$OUTPUT_DIR'"
+  cp -r "$AURBUILD"/*/*.pkg.tar.* "$OUTPUT_DIR"
 }
 
-# Function to categorize packages based on size
+# Use more efficient mv
 categorize_packages() {
-  local input_dir="$1"
   local large_output_dir="$HOME/output-large"
   local small_output_dir="$HOME/output-small"
 
-  find "$input_dir" -name '*.pkg.tar.*' -exec du -m {} + | while read -r size pkg_file; do
-    ((size > 100)) && mv -f "$pkg_file" "$large_output_dir" || mv -f "$pkg_file" "$small_output_dir"
+  fd --type f --extension pkg.tar.* "$1" | while IFS= read -r pkg_file; do
+    if [[ $(du -m "$pkg_file" | cut -f1) -gt 100 ]]; then
+      mv -f "$pkg_file" "$large_output_dir"
+    else
+      mv -f "$pkg_file" "$small_output_dir"
+    fi
   done
 }
 
@@ -106,8 +115,7 @@ categorize_packages() {
 main() {
   create_directories
   un_comment_jmake
-  clone_pkg
-  install_aur_deps
+  iad
   build_aur_packages
   build_local_packages
   copy_aur_deps
