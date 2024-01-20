@@ -13,7 +13,7 @@ jobs:
       image: archlinux:latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: setup pacman
         run: |
           rm -rf /etc/pacman.d/gnupg
@@ -27,18 +27,19 @@ jobs:
           chown -R builder:builder /home/builder/
       - name: Import SSH key
         run: |
-          cd /home/builder
           sudo -u builder bash -c '
+          cd /home/builder
           mkdir -p .ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > .ssh/id_rsa
           echo "${{ secrets.SSH_PRIVATE_KEY_PUB }}" > .ssh/id_rsa.pub
           chmod 600 .ssh/id_rsa
           chmod 600 .ssh/id_rsa.pub
+          ssh-add ~/.ssh/id_rsa
           ssh-keyscan github.com >> .ssh/known_hosts
           '
       - run: |
-          cd /home/builder
           sudo -u builder bash -c '
+          cd /home/builder
           ls -la /home/builder
           pwd
           find .
@@ -54,8 +55,8 @@ jobs:
           '
       - name: Build pkg
         run: |
-          cd /home/builder
           sudo -u builder bash -c '
+          cd /home/builder
           git clone https://aur.archlinux.org/yay-bin.git
           cd yay-bin
           makepkg -sci --noconfirm --needed --noprogressbar --skippgpcheck
@@ -68,8 +69,8 @@ jobs:
           '
       - name: Clone Repo and copy pkg and Commit and Push Changes
         run: |
-          cd /home/builder/archfiery-pkgbuild/
           sudo -u builder bash -c '
+          cd /home/builder/archfiery-pkgbuild/
           git clone git@github.com:MikuX-Dev/archfiery-repo.git /home/builder/archfiery-repo
           ./push.sh
           '
