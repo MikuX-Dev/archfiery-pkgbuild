@@ -5,7 +5,7 @@ jobs:
     docker:
       - image: archlinux:latest
     steps:
-      - checkout
+      # - checkout
       - run:
           name: Setup pacman
           command: |
