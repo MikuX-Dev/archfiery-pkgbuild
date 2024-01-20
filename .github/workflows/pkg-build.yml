@@ -40,6 +40,7 @@ jobs:
           ssh-add .ssh/id_ed
           echo "SSH Agent status:"
           ssh-add -l
+          ssh-keyscan github.com >> .ssh/known_hosts
           '
       - run: |
           sudo -u builder bash -c '
