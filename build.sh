@@ -29,7 +29,7 @@ fi
 
 un_comment_jmake() {
   sudo sed -i 's|^#MAKEFLAGS.*|MAKEFLAGS="-j$(nproc)"|g' /etc/makepkg.conf
-  sudo sed -i 's|^#BUILDDIR.*|BUILDDIR=/tmp/makepkg|g' /etc/makepkg.conf
+  # sudo sed -i 's|^#BUILDDIR.*|BUILDDIR=/tmp/makepkg|g' /etc/makepkg.conf
 }
 
 # Directories to be used within the script
@@ -38,6 +38,7 @@ declare -a dirs=(
   "$AURBUILD"
   "$HOME/output-large"
   "$HOME/output-small"
+  "$HOME/log/"
 )
 
 # Function to create directories
@@ -141,9 +142,15 @@ categorize_packages() {
 main() {
   create_directories
   un_comment_jmake
-  iad
-  build_aur_packages
-  build_local_packages
+  {
+    iad 
+  } &> "$HOME"/log/iad.txt
+  {
+    build_aur_packages
+  } &> "$HOME"/log/build_aur_packages.txt
+  {
+    build_local_packages
+  } &> "$HOME"/log/build_local_packages.txt
   copy_aur_deps
   copy_build_pkg
   categorize_packages "$OUTPUT_DIR"
