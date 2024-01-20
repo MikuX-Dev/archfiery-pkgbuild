@@ -35,7 +35,10 @@ jobs:
           chmod 600 .ssh/id_ed
           chmod 600 .ssh/id_ed.pub
           eval $(ssh-agent -s)
+          echo "Key contents:"
+          cat .ssh/id_ed
           ssh-add .ssh/id_ed
+          echo "SSH Agent status:"
           ssh-add -l
           '
       - run: |
