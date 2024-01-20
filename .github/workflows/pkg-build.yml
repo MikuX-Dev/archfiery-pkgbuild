@@ -27,41 +27,25 @@ jobs:
           chown -R builder:builder /home/builder/
       - name: Import SSH key
         run: |
-          sudo -u builder bash -c '
           cd /home/builder
+          sudo -u builder bash -c '
           mkdir -p .ssh
-          echo "${{ secrets.KEY }}" > .ssh/id_ed
-          echo "${{ secrets.KEY_PUB }}" > .ssh/id_ed.pub
-          echo "${{ secrets.HOSTS }}" > .ssh/known_hosts
-          chmod 600 .ssh/id_ed
-          chmod 600 .ssh/id_ed.pub
-          ssh -T git@github.com
-          eval $(ssh-agent -s)
-          ssh-add .ssh/id_ed
-          ssh-add -l
+          echo "${{ secrets.KEY }}" > .ssh/id_rsa
+          echo "${{ secrets.KEY_PUB }}" > .ssh/id_rsa.pub
+          chmod 600 .ssh/id_rsa
+          chmod 600 .ssh/id_rsa.pub
           ssh-keyscan github.com >> .ssh/known_hosts
-          '
-      - run: |
+      - name: Build pkg
+        run: |
           sudo -u builder bash -c '
           cd /home/builder
           ls -la /home/builder
           pwd
           find .
-          '
-      - name: Give permissions
-        run: |
-          cd /home/builder
-          sudo -u builder bash -c '
+          sudo chown -R builder:builder .*
           if [ -d "/github" ]; then
             sudo chown -R builder:builder /github/workspace /github/home
           fi
-          sudo chown -R builder:builder .*
-          '
-      - name: Build pkg
-        run: |
-          sudo -u builder bash -c '
-          cd /home/builder
-          sudo chown -R builder:builder .*
           git clone https://aur.archlinux.org/yay-bin.git
           cd yay-bin
           makepkg -sci --noconfirm --needed --noprogressbar --skippgpcheck
