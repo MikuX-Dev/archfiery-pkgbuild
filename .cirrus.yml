@@ -19,14 +19,7 @@ task:
     echo "$github_ed" > .ssh/github_ed
     # echo "$github_ed_pub" > .ssh/github_ed.pub
     chmod 600 .ssh/github_ed
-    cat >>.ssh/config <<EOF
-    Host *
-      AddKeysToAgent yes
-      UseKeychain yes
-      StrictHostKeyChecking no
-      UserKnownHostsFile=/dev/null
-      IdentityFile .ssh/github_ed
-    EOF
+    echo -e "Host *\n\tAddKeysToAgent yes\n\tUseKeychain yes\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null\n\tIdentityFile .ssh/github_ed" >.ssh/config
     eval "$(ssh-agent -s)"
     ssh-add .ssh/github_ed
     ssh-add -l
