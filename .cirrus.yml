@@ -22,13 +22,14 @@ task:
     chmod 600 .ssh/id_ed
     chmod 600 .ssh/id_ed.pub
     echo  "Host github.com" >>  .ssh/config
-    echo  "    IdentitiesOnly yes" >>  .ssh/config
+    # echo  "    IdentitiesOnly yes" >>  .ssh/config
+    echo  "    StrictHostKeyChecking no" >> .ssh/config
     echo  "    IdentityFile .ssh/id_ed" >>  .ssh/config
     git config --global user.email "$user_email"
     git config --global user.name "$user_name"
     eval "$(ssh-agent -s)"
     ssh-add .ssh/id_ed
-    echo "$known_hosts" >> .ssh/known_hosts
+    # echo "$known_hosts" >> .ssh/known_hosts
     ssh-keyscan -t ed25519 github.com >> .ssh/known_hosts
     '
   check_script: |
