@@ -2,7 +2,7 @@ name: pkg-build
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   schedule:
     - cron: "0 8 */4 * *" # Every 4 days
 
@@ -54,23 +54,18 @@ jobs:
             sudo chown -R builder:builder /github/workspace /github/home
           fi
           chown -R builder:builder .*
-          git clone https://aur.archlinux.org/yay-bin.git
+          git clone https://aur.archlinux.org/paru-bin.git
           chown -R builder:builder .*
-          cd yay-bin
+          cd paru-bin
           makepkg -sci --noconfirm --needed --noprogressbar --skippgpcheck
           cd /home/builder
-          rm -rf yay-bin*
+          rm -rf paru-bin*
           git clone git@github.com:MikuX-Dev/archfiery-pkgbuild.git
           chown -R builder:builder .*
           cd archfiery-pkgbuild/
           chmod +x *.sh
           ./build.sh
           '
-      - uses: actions/upload-artifact@v4
-        with:
-           name: logs
-           path: /home/builder/log/*.txt
-           compression-level: 9
       - name: Clone Repo and copy pkg and Commit and Push Changes
         run: |
           cd /home/builder/archfiery-pkgbuild/

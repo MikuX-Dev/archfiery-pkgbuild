@@ -15,7 +15,7 @@ set -euo pipefail
 OUTPUT_DIR="$HOME/output"
 AURBUILD="$HOME/aur-build"
 PKGSTXT="$HOME/archfiery-pkgbuild/packages"
-YAYCACHE="$HOME/.cache/yay"
+PARUCACHE="$HOME/.cache/paru/clone"
 LOCALPKG="$HOME/archfiery-pkgbuild/packages"
 
 # Find the *.txt file in $PKGSTXT
@@ -69,7 +69,7 @@ install_aur_deps() {
   for dep in "${all_deps[@]}"; do
     if ! is_in_repos "$dep"; then
       echo "Installing AUR dependency: $dep"
-      yay -S --needed --noconfirm --asdeps --sudoloop "$dep"
+      paru -S --needed --noconfirm --asdeps --sudoloop --cleanafter --skipreview "$dep"
     else
       sudo pacman -S --needed --noconfirm --asdeps "$dep"
     fi
@@ -104,7 +104,7 @@ build_local_packages() {
 }
 
 copy_aur_deps() {
-  for dir in "$YAYCACHE"/*/; do
+  for dir in "$PARUCACHE"/*/; do
     cp -r "$dir"/*.pkg.tar.* "$OUTPUT_DIR"
   done
 }
