@@ -15,11 +15,8 @@ task:
     cd /home/builder
     sudo -u builder bash -c '
     mkdir -p .ssh
-    chmod 700 .ssh
     echo "$github_ed" > .ssh/github_ed
     echo "$github_ed_pub" > .ssh/github_ed.pub
-    chmod 600 .ssh/github_ed
-    chmod 600 .ssh/github_ed.pub
     echo -e "Host github.com\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null\n\tIdentityFile .ssh/github_ed\n" >> .ssh/config
     # git config --global user.email "$user_email"
     # git config --global user.name "$user_name"
