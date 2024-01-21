@@ -16,6 +16,7 @@ OUTPUT_DIR="$HOME/output"
 AURBUILD="$HOME/aur-build"
 PKGSTXT="$HOME/archfiery-pkgbuild/packages"
 PARUCACHE="$HOME/.cache/paru/clone"
+YAYCACHE="$HOME/.cache/yay"
 LOCALPKG="$HOME/archfiery-pkgbuild/packages"
 
 # Find the *.txt file in $PKGSTXT
@@ -27,9 +28,9 @@ if [ -z "$TXT_FILE" ]; then
   exit 1
 fi
 
-un_comment_jmake() {
+un_comment_makeconf() {
   sudo sed -i 's|^#MAKEFLAGS.*|MAKEFLAGS="-j$(nproc)"|g' /etc/makepkg.conf
-  # sudo sed -i 's|^#BUILDDIR.*|BUILDDIR=/tmp/makepkg|g' /etc/makepkg.conf
+  sudo sed -i 's|^#BUILDDIR.*|BUILDDIR=/tmp/makepkg|g' /etc/makepkg.conf
 }
 
 # Directories to be used within the script
@@ -56,22 +57,16 @@ clone_pkg() {
   popd
 }
 
-# Function to check if a package is in the official repositories
-is_in_repos() {
-  pacman -Ss "$1" >/dev/null 2>&1
-}
-
 # Function to install AUR dependencies
 install_aur_deps() {
   source ./PKGBUILD
   local all_deps=("${depends[@]}" "${makedepends[@]}")
 
   for dep in "${all_deps[@]}"; do
-    if ! is_in_repos "$dep"; then
-      echo "Installing AUR dependency: $dep"
+    if pacman -Ss "$dep" >/dev/null 2>&1; then
       paru -S --needed --noconfirm --asdeps --sudoloop --cleanafter --skipreview "$dep"
     else
-      sudo pacman -S --needed --noconfirm --asdeps "$dep"
+      yay -S --needed --noconfirm --asdeps --sudoloop "$dep"
     fi
   done
 }
@@ -105,6 +100,10 @@ build_local_packages() {
 
 copy_aur_deps() {
   for dir in "$PARUCACHE"/*/; do
+    cp -r "$dir"/*.pkg.tar.* "$OUTPUT_DIR"
+  done
+
+  for dir in "$YAYCACHE"/*/; do
     cp -r "$dir"/*.pkg.tar.* "$OUTPUT_DIR"
   done
 }
@@ -141,7 +140,7 @@ categorize_packages() {
 # Main execution flow
 main() {
   create_directories
-  un_comment_jmake
+  # un_comment_makeconf
   iad
   build_aur_packages
   build_local_packages
