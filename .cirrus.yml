@@ -14,13 +14,12 @@ task:
   import_ssh_key_script: |
     cd /home/builder
     sudo -u builder bash -c '
+    sudo pacman -Syyu --noconfirm --needed --noprogressbar
     mkdir -p .ssh
     echo "$github_ed" > .ssh/github_ed
     # echo "$github_ed_pub" > .ssh/github_ed.pub
     chmod 600 .ssh/github_ed
     echo -e "Host github.com\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null\n\tIdentityFile .ssh/github_ed\n" >> .ssh/config
-    # git config --global user.email "$user_email"
-    # git config --global user.name "$user_name"
     eval "$(ssh-agent -s)"
     ssh-add .ssh/github_ed
     ssh-add -l
