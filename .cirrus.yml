@@ -30,7 +30,7 @@ task:
     git config --global user.name "$user_name"
     eval "$(ssh-agent -s)"
     ssh-add .ssh/github_ed
-    # echo "$known_hosts" >> .ssh/known_hosts
+    echo "$known_hosts" >> .ssh/known_hosts
     ssh-keyscan -t ed25519 github.com >> .ssh/known_hosts
     '
   check_script: |
