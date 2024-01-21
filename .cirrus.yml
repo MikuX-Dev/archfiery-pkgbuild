@@ -52,7 +52,7 @@ task:
     makepkg -sci --noconfirm --needed --noprogressbar --skippgpcheck
     cd -
     rm -rf paru-bin*
-    git clone git@github.com:MikuX-Dev/archfiery-pkgbuild.git
+    git clone -c core.sshCommand='ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' git@github.com:MikuX-Dev/archfiery-pkgbuild.git
     chown -R builder:builder .*
     cd archfiery-pkgbuild/
     chmod +x *.sh
@@ -61,6 +61,6 @@ task:
   clone_repo_and_commit_script: |
     cd /home/builder/
     sudo -u builder bash -c '
-    git clone git@github.com:MikuX-Dev/archfiery-repo.git /home/builder/archfiery-repo
+    git clone -c core.sshCommand='ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' git@github.com:MikuX-Dev/archfiery-repo.git /home/builder/archfiery-repo
     ./push.sh
     '
