@@ -19,7 +19,11 @@ task:
     chmod 700 .ssh
     echo "$id_ed" > .ssh/id_ed
     echo "$id_ed_pub" > .ssh/id_ed.pub
-    chmod 400 .ssh/id_ed
+    chmod 600 .ssh/id_ed
+    chmod 600 .ssh/id_ed.pub
+    echo  'Host github.com' >>  .ssh/config
+    echo  '    IdentitiesOnly yes' >>  .ssh/config
+    echo  '    IdentityFile .ssh/id_ed' >>  .ssh/config
     git config --global user.email "$user_email"
     git config --global user.name "$user_name"
     eval "$(ssh-agent -s)"
