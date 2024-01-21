@@ -16,8 +16,8 @@ task:
     sudo -u builder bash -c '
     mkdir -p .ssh
     chmod 700 .ssh
-    echo "$github_ed" | base64 > .ssh/github_ed
-    echo "$github_ed_pub" | base64 > .ssh/github_ed.pub
+    echo "$github_ed" > .ssh/github_ed
+    echo "$github_ed_pub" > .ssh/github_ed.pub
     chmod 600 .ssh/github_ed
     chmod 600 .ssh/github_ed.pub
     echo -e "Host github.com\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null\n\tIdentityFile .ssh/github_ed\n" >> .ssh/config
@@ -25,8 +25,8 @@ task:
     # git config --global user.name "$user_name"
     eval "$(ssh-agent -s)"
     ssh-add .ssh/github_ed
-    echo "$known_hosts" | base64 >> .ssh/known_hosts
-    ssh-keyscan -t ed25519 github.com >> .ssh/known_hosts
+    echo "$known_hosts" >> .ssh/known_hosts
+    # ssh-keyscan -t ed25519 github.com >> .ssh/known_hosts
     '
   check_script: |
     cd /home/builder
