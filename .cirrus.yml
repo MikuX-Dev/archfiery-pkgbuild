@@ -21,17 +21,13 @@ task:
     echo "$github_ed_pub" > .ssh/github_ed.pub
     chmod 600 .ssh/github_ed
     chmod 600 .ssh/github_ed.pub
-    echo  "Host github.com" >>  .ssh/config
-    # echo  "    IdentitiesOnly yes" >>  .ssh/config
-    echo  "    UserKnownHostsFile=/dev/null" >> .ssh/config
-    echo  "    StrictHostKeyChecking no" >> .ssh/config
-    echo  "    IdentityFile .ssh/github_ed" >>  .ssh/config
-    git config --global user.email "$user_email"
-    git config --global user.name "$user_name"
+    echo -e "Host github.com\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null\n\tIdentityFile .ssh/github_ed\n" >> .ssh/config
+    # git config --global user.email "$user_email"
+    # git config --global user.name "$user_name"
     eval "$(ssh-agent -s)"
     ssh-add .ssh/github_ed
-    echo "$known_hosts" >> .ssh/known_hosts
-    ssh-keyscan -t ed25519 github.com >> .ssh/known_hosts
+    # echo "$known_hosts" >> .ssh/known_hosts
+    # ssh-keyscan -t ed25519 github.com >> .ssh/known_hosts
 
     export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
     '
