@@ -32,6 +32,8 @@ task:
     ssh-add .ssh/github_ed
     echo "$known_hosts" >> .ssh/known_hosts
     ssh-keyscan -t ed25519 github.com >> .ssh/known_hosts
+
+    export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
     '
   check_script: |
     cd /home/builder
@@ -52,7 +54,7 @@ task:
     makepkg -sci --noconfirm --needed --noprogressbar --skippgpcheck
     cd -
     rm -rf paru-bin*
-    git clone -c core.sshCommand='ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' git@github.com:MikuX-Dev/archfiery-pkgbuild.git
+    git clone git@github.com:MikuX-Dev/archfiery-pkgbuild.git
     chown -R builder:builder .*
     cd archfiery-pkgbuild/
     chmod +x *.sh
@@ -61,6 +63,6 @@ task:
   clone_repo_and_commit_script: |
     cd /home/builder/
     sudo -u builder bash -c '
-    git clone -c core.sshCommand='ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' git@github.com:MikuX-Dev/archfiery-repo.git /home/builder/archfiery-repo
+    git clone git@github.com:MikuX-Dev/archfiery-repo.git /home/builder/archfiery-repo
     ./push.sh
     '
