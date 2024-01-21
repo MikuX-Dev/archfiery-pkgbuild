@@ -5,7 +5,8 @@ env:
 
 task:
   name: pkg-build
-  only_if: $CIRRUS_BRANCH == 'main' || $CIRRUS_CRON
+  only_if: $CIRRUS_BRANCH == 'main'
+  only_if: $CIRRUS_CRON
   cron: "0 8 */4 * *"
   timeout_in: 120m
   container:
