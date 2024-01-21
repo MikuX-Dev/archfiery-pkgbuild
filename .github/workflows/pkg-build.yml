@@ -10,27 +10,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: archlinux:latest
+      image: mikuxdev/archlinux-pkgbuild:latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-      - name: setup pacman
-        run: |
-          pacman-key --init
-          pacman-key --populate
-
-          if grep -q "\[multilib\]" /etc/pacman.conf; then \
-            sed -i '/^\[multilib\]/,/Include = \/etc\/pacman.d\/mirrorlist/ s/^#//' /etc/pacman.conf; \
-          else \
-            echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" | tee -a /etc/pacman.conf; \
-          fi
-
-          pacman --noconfirm -Syyu reflector rsync curl wget git-lfs openssh base-devel devtools sudo git lib32-readline lib32-zlib namcap fakeroot audit grep diffutils parallel
-
-          useradd -m -d /home/builder -s /bin/bash -G wheel builder
-          sed -i 's/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
-          echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-          chown -R builder:builder /home/builder/
       - name: Import SSH key
         run: |
           cd /home/builder
@@ -46,10 +29,10 @@ jobs:
         run: |
           cd /home/builder
           sudo -u builder bash -c '
+          sudo chown -R builder:builder .*
           ls -la /home/builder
           pwd
           find .
-          sudo chown -R builder:builder .*
           if [ -d "/github" ]; then
             sudo chown -R builder:builder /github/workspace /github/home
           fi
@@ -72,7 +55,7 @@ jobs:
           '
       - name: Clone Repo and copy pkg and Commit and Push Changes
         run: |
-          cd /home/builder/archfiery-pkgbuild/
+          cd /home/builder
           sudo -u builder bash -c '
           git clone git@github.com:MikuX-Dev/archfiery-repo.git /home/builder/archfiery-repo
           ./push.sh
