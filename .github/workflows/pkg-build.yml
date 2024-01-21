@@ -38,15 +38,11 @@ jobs:
           fi
           chown -R builder:builder .*
           git clone https://aur.archlinux.org/paru-bin.git
-          git clone https://aur.archlinux.org/yay-bin.git
           chown -R builder:builder .*
           cd paru-bin
           makepkg -sci --noconfirm --needed --noprogressbar --skippgpcheck
           cd -
-          cd yay-bin
-          makepkg -sci --noconfirm --needed --noprogressbar --skippgpcheck
-          cd -
-          rm -rf paru-bin* yay-bin*
+          rm -rf paru-bin*
           git clone git@github.com:MikuX-Dev/archfiery-pkgbuild.git
           chown -R builder:builder .*
           cd archfiery-pkgbuild/
