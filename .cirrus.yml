@@ -1,6 +1,6 @@
 env:
-  id_ed: ENCRYPTED[f3cd896f09478698b169ea755bd3d630356d7160c14e07c16c3c2c2588386f9ba551f4a58b4ba2aada2662213f46849a]
-  id_ed_pub: ENCRYPTED[6385dddb34167fcc0400c56b38187d73507d3e9b8c04783a23c22a7719a5e20ad96a0083d3ab0fe22c7019c54466b367]
+  github_ed: ENCRYPTED[f3cd896f09478698b169ea755bd3d630356d7160c14e07c16c3c2c2588386f9ba551f4a58b4ba2aada2662213f46849a]
+  github_ed_pub: ENCRYPTED[6385dddb34167fcc0400c56b38187d73507d3e9b8c04783a23c22a7719a5e20ad96a0083d3ab0fe22c7019c54466b367]
   known_hosts: ENCRYPTED[e775bd2f7b3be3fcc93638f3d1aa3c31208dc8cad2b919c0bcdd0895dc85dea2edb8fe1350713853481aa999b9612188]
 
 task:
@@ -17,18 +17,19 @@ task:
     sudo -u builder bash -c '
     mkdir -p .ssh
     chmod 700 .ssh
-    echo "$id_ed" > .ssh/id_ed
-    echo "$id_ed_pub" > .ssh/id_ed.pub
-    chmod 600 .ssh/id_ed
-    chmod 600 .ssh/id_ed.pub
+    echo "$github_ed" > .ssh/github_ed
+    echo "$github_ed_pub" > .ssh/github_ed.pub
+    chmod 600 .ssh/github_ed
+    chmod 600 .ssh/github_ed.pub
     echo  "Host github.com" >>  .ssh/config
     # echo  "    IdentitiesOnly yes" >>  .ssh/config
+    echo  "    UserKnownHostsFile=/dev/null" >> .ssh/config
     echo  "    StrictHostKeyChecking no" >> .ssh/config
-    echo  "    IdentityFile .ssh/id_ed" >>  .ssh/config
+    echo  "    IdentityFile .ssh/github_ed" >>  .ssh/config
     git config --global user.email "$user_email"
     git config --global user.name "$user_name"
     eval "$(ssh-agent -s)"
-    ssh-add .ssh/id_ed
+    ssh-add .ssh/github_ed
     # echo "$known_hosts" >> .ssh/known_hosts
     ssh-keyscan -t ed25519 github.com >> .ssh/known_hosts
     '
