@@ -11,7 +11,7 @@ task:
     image: archlinux:latest
     cpu: 4
     memory: 12G
-  pacman-setup: |
+  import_ssh_key_script: |
     pacman-key --init
     pacman-key --populate
 
@@ -27,7 +27,7 @@ task:
     sed -i 's/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
     echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
     chown -R builder:builder /home/builder/
-  import_ssh_key_script: |
+
     cd /home/builder
     sudo -u builder bash -c '
     sudo pacman -Syyu --noconfirm --needed --noprogressbar
@@ -47,11 +47,6 @@ task:
     ssh-add .ssh/github_ed
     ssh -T git@github.com
     '
-  check_script: |
-    cd /home/builder
-    ls -la
-    pwd
-    find .
   build_pkg_script: |
     cd /home/builder
     sudo -u builder bash -c '
