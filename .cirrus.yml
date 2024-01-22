@@ -32,9 +32,11 @@ task:
     sudo -u builder bash -c '
     sudo pacman -Syyu --noconfirm --needed --noprogressbar
     mkdir -p /home/builder/.ssh
+    chown -R builder:builder /home/builder/.ssh
+    chmod 700 /home/builder/.ssh
     touch /home/builder/.ssh/config
-    echo "$github_ed" > /home/builder/.ssh/github_ed
-    echo "$github_ed_pub" > /home/builder/.ssh/github_ed.pub
+    echo $github_ed > /home/builder/.ssh/github_ed
+    echo $github_ed_pub > /home/builder/.ssh/github_ed.pub
     chmod 600 /home/builder/.ssh/github_ed
     sudo echo -e "Host github.com\n\tForwardAgent yes\n\tAddKeysToAgent yes\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null\n\tIdentityFile .ssh/github_ed" >> /etc/ssh/sshd_config
     echo -e "Host github.com\n\tForwardAgent yes\n\tAddKeysToAgent yes\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null\n\tIdentityFile .ssh/github_ed" >> /home/builder/.ssh/config
@@ -42,7 +44,7 @@ task:
     cat /home/builder/.ssh/config
     eval "$(ssh-agent -s)"
     echo "$SSH_AUTH_SOCK"
-    echo "$known_hosts" >> /home/builder/.ssh/known_hosts
+    echo $known_hosts >> /home/builder/.ssh/known_hosts
     ssh-keyscan -t ed25519 github.com >> /home/builder/.ssh/known_hosts
     ssh-add /home/builder/.ssh/github_ed
     ssh -vT git@github.com
