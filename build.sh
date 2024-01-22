@@ -30,7 +30,7 @@ fi
 
 un_comment_makeconf() {
   sudo sed -i 's|^#MAKEFLAGS.*|MAKEFLAGS="-j$(nproc)"|g' /etc/makepkg.conf
-  sudo sed -i 's|^#BUILDDIR.*|BUILDDIR=/tmp/makepkg|g' /etc/makepkg.conf
+  # sudo sed -i 's|^#BUILDDIR.*|BUILDDIR=/tmp/makepkg|g' /etc/makepkg.conf
 }
 
 # Directories to be used within the script
@@ -140,7 +140,7 @@ categorize_packages() {
 # Main execution flow
 main() {
   create_directories
-  # un_comment_makeconf
+  un_comment_makeconf
   iad
   build_aur_packages
   build_local_packages

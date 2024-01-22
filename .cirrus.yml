@@ -5,8 +5,8 @@ task:
   timeout_in: 120m
   container:
     image: archlinux:base-devel
-    cpu: 4
-    memory: 12G
+    cpu: 8
+    memory: 32G
   import_ssh_key_script: |
     pacman-key --init
     pacman-key --populate
