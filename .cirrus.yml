@@ -30,8 +30,7 @@ task:
     chown -R builder:builder /home/builder/.ssh
     chmod 700 /home/builder/.ssh
     touch /home/builder/.ssh/config
-    echo "
-    -----BEGIN OPENSSH PRIVATE KEY-----
+    echo "-----BEGIN OPENSSH PRIVATE KEY-----
     b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
     QyNTUxOQAAACD0F1z9s53prcpxeTJFByv5nKGQjKkqSTxUy2h+ky/K9gAAAKCnkBUJp5AV
     CQAAAAtzc2gtZWQyNTUxOQAAACD0F1z9s53prcpxeTJFByv5nKGQjKkqSTxUy2h+ky/K9g
