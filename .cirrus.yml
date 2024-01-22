@@ -56,7 +56,6 @@ task:
     ssh-add /home/builder/.ssh/github_ed
     ssh -T git@github.com
     '
-  build_pkg_script: |
     cd /home/builder
     sudo -u builder bash -c '
     sudo chown -R builder:builder .*
@@ -76,7 +75,6 @@ task:
     chmod +x *.sh
     ./build.sh
     '
-  clone_repo_and_commit_script: |
     cd /home/builder/archfiery-pkgbuild/
     sudo -u builder bash -c '
     git clone git@github.com:MikuX-Dev/archfiery-repo.git /home/builder/archfiery-repo
