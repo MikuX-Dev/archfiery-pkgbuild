@@ -7,7 +7,7 @@ task:
     image: archlinux:base-devel
     cpu: 4
     memory: 12G
-  setup: |
+  pacman-ssh-sys: |
     pacman-key --init
     pacman-key --populate
 
