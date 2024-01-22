@@ -31,38 +31,34 @@ task:
     cd /home/builder
     sudo -u builder bash -c '
     sudo pacman -Syyu --noconfirm --needed --noprogressbar
-    mkdir -p .ssh
-    touch .ssh/config
-    echo "$github_ed" > .ssh/github_ed
-    echo "$github_ed_pub" > .ssh/github_ed.pub
-    chmod 600 .ssh/github_ed
-    echo -e "Host github.com\n\tForwardAgent yes\n\tAddKeysToAgent yes\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null\n\tIdentityFile .ssh/github_ed" >> /etc/ssh/sshd_config
-    echo -e "Host github.com\n\tForwardAgent yes\n\tAddKeysToAgent yes\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null\n\tIdentityFile .ssh/github_ed" >> .ssh/config
+    mkdir -p /home/builder/.ssh
+    touch /home/builder/.ssh/config
+    echo "$github_ed" > /home/builder/.ssh/github_ed
+    echo "$github_ed_pub" > /home/builder/.ssh/github_ed.pub
+    chmod 600 /home/builder/.ssh/github_ed
+    sudo echo -e "Host github.com\n\tForwardAgent yes\n\tAddKeysToAgent yes\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null\n\tIdentityFile .ssh/github_ed" >> /etc/ssh/sshd_config
+    echo -e "Host github.com\n\tForwardAgent yes\n\tAddKeysToAgent yes\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null\n\tIdentityFile .ssh/github_ed" >> /home/builder/.ssh/config
     cat /etc/ssh/sshd_config
-    cat .ssh/config
+    cat /home/builder/.ssh/config
     eval "$(ssh-agent -s)"
     echo "$SSH_AUTH_SOCK"
-    echo "$known_hosts" >> .ssh/known_hosts
-    ssh-keyscan -t ed25519 github.com >> .ssh/known_hosts
-    ssh-add .ssh/github_ed
-    ssh -T git@github.com
+    echo "$known_hosts" >> /home/builder/.ssh/known_hosts
+    ssh-keyscan -t ed25519 github.com >> /home/builder/.ssh/known_hosts
+    ssh-add /home/builder/.ssh/github_ed
+    ssh -vT git@github.com
     '
   build_pkg_script: |
     cd /home/builder
     sudo -u builder bash -c '
     sudo chown -R builder:builder .*
-    if [ -d "/github" ]; then
-      sudo chown -R builder:builder /github/workspace /github/home
-    fi
-    chown -R builder:builder .*
     git clone https://aur.archlinux.org/paru-bin.git
-    chown -R builder:builder .*
+    sudo chown -R builder:builder .*
     cd paru-bin
     makepkg -sci --noconfirm --needed --noprogressbar --skippgpcheck
     cd -
     rm -rf paru-bin*
     git clone git@github.com:MikuX-Dev/archfiery-pkgbuild.git
-    chown -R builder:builder .*
+    sudo chown -R builder:builder .*
     cd archfiery-pkgbuild/
     chmod +x *.sh
     ./build.sh
