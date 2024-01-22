@@ -47,7 +47,7 @@ slack-desktop
 snapper-gui-git
 spotify
 stacer-bin
-tela-icon-theme-bi
+tela-icon-theme-bin
 telegram-desktop-bin
 thorium-browser-bin
 thunar-extended
@@ -61,7 +61,7 @@ tor-browser-bin
 ungoogled-chromium-bin
 universal-android-debloater-bin
 update-grub
-vala-panel-appmenu-common-git
+vala-panel-appmenu-common
 vala-panel-appmenu-registrar-git
 vala-panel-appmenu-xfce-git
 ventoy-bin
