@@ -8,9 +8,25 @@ task:
   cron: "0 8 */4 * *"
   timeout_in: 120m
   container:
-    image: mikuxdev/archlinux-pkgbuild:latest
+    image: archlinux:latest
     cpu: 4
     memory: 12G
+  setup_arch: |
+    pacman-key --init
+    pacman-key --populate
+
+    if grep -q "\[multilib\]" /etc/pacman.conf; then \
+      sed -i '/^\[multilib\]/,/Include = \/etc\/pacman.d\/mirrorlist/ s/^#//' /etc/pacman.conf; \
+    else \
+      echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" | tee -a /etc/pacman.conf; \
+    fi
+
+    pacman --noconfirm -Syyu reflector rsync curl wget git-lfs openssh base-devel devtools sudo git lib32-readline lib32-zlib namcap fakeroot audit grep diffutils parallel
+
+    useradd -m -d /home/builder -s /bin/bash -G wheel builder
+    sed -i 's/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
+    echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+    chown -R builder:builder /home/builder/
   import_ssh_key_script: |
     cd /home/builder
     sudo -u builder bash -c '
@@ -20,13 +36,16 @@ task:
     echo "$github_ed" > .ssh/github_ed
     echo "$github_ed_pub" > .ssh/github_ed.pub
     chmod 600 .ssh/github_ed
-    echo -e "Host github.com\n\tForwardAgent yes\n\tAddKeysToAgent yes\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null\n\tIdentityFile .ssh/github_ed" > .ssh/config
+    echo -e "Host github.com\n\tForwardAgent yes\n\tAddKeysToAgent yes\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null\n\tIdentityFile .ssh/github_ed" >> /etc/ssh/sshd_config
+    echo -e "Host github.com\n\tForwardAgent yes\n\tAddKeysToAgent yes\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null\n\tIdentityFile .ssh/github_ed" >> .ssh/config
+    cat /etc/ssh/sshd_config
     cat .ssh/config
     eval "$(ssh-agent -s)"
-    ssh-add -K .ssh/github_ed
-    ssh -T git@github.com
+    echo "$SSH_AUTH_SOCK"
     echo "$known_hosts" >> .ssh/known_hosts
     ssh-keyscan -t ed25519 github.com >> .ssh/known_hosts
+    ssh-add .ssh/github_ed
+    ssh -T git@github.com
     '
   check_script: |
     cd /home/builder
