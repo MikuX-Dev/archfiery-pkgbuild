@@ -29,8 +29,8 @@ if [ -z "$TXT_FILE" ]; then
 fi
 
 un_comment_makeconf() {
-  sudo sed -i 's|^#MAKEFLAGS.*|MAKEFLAGS="-j$(nproc) - 1"|g' /etc/makepkg.conf
-  # sudo sed -i 's|^#BUILDDIR.*|BUILDDIR=/tmp/makepkg|g' /etc/makepkg.conf
+  # sudo sed -i 's|^#MAKEFLAGS.*|MAKEFLAGS="-j$(nproc)"|g' /etc/makepkg.conf
+  sudo sed -i 's|^#BUILDDIR.*|BUILDDIR=/tmp/makepkg|g' /etc/makepkg.conf
 }
 
 # Directories to be used within the script
