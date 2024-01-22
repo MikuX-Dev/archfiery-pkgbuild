@@ -11,7 +11,7 @@ task:
     image: archlinux:latest
     cpu: 4
     memory: 12G
-  setup_arch: |
+  pacman-setup: |
     pacman-key --init
     pacman-key --populate
 
