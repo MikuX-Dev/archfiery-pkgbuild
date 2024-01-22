@@ -1,7 +1,7 @@
 task:
   environment:
     github_ed: ENCRYPTED[f3cd896f09478698b169ea755bd3d630356d7160c14e07c16c3c2c2588386f9ba551f4a58b4ba2aada2662213f46849a]
-    # github_ed_pub: ENCRYPTED[6385dddb34167fcc0400c56b38187d73507d3e9b8c04783a23c22a7719a5e20ad96a0083d3ab0fe22c7019c54466b367]
+    github_ed_pub: ENCRYPTED[6385dddb34167fcc0400c56b38187d73507d3e9b8c04783a23c22a7719a5e20ad96a0083d3ab0fe22c7019c54466b367]
     known_hosts: ENCRYPTED[e775bd2f7b3be3fcc93638f3d1aa3c31208dc8cad2b919c0bcdd0895dc85dea2edb8fe1350713853481aa999b9612188]
   name: pkg-build
   only_if: $CIRRUS_BRANCH == 'main'
@@ -16,14 +16,16 @@ task:
     sudo -u builder bash -c '
     sudo pacman -Syyu --noconfirm --needed --noprogressbar
     mkdir -p .ssh
+    touch .ssh/config
     echo "$github_ed" > .ssh/github_ed
-    # echo "$github_ed_pub" > .ssh/github_ed.pub
+    echo "$github_ed_pub" > .ssh/github_ed.pub
     chmod 600 .ssh/github_ed
-    echo -e "Host *\n\tAddKeysToAgent yes\n\tUseKeychain yes\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null\n\tIdentityFile .ssh/github_ed" >.ssh/config
+    echo -e "Host github.com\n\tForwardAgent yes\n\tAddKeysToAgent yes\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null\n\tIdentityFile .ssh/github_ed" >.ssh/config
     eval "$(ssh-agent -s)"
-    ssh-add .ssh/github_ed
     ssh-add -l
-    # echo "$known_hosts" >> .ssh/known_hosts
+    ssh-add .ssh/github_ed
+    ssh -T git@github.com
+    echo "$known_hosts" >> .ssh/known_hosts
     ssh-keyscan -t ed25519 github.com >> .ssh/known_hosts
     '
   check_script: |
