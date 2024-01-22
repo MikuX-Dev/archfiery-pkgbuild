@@ -17,17 +17,17 @@ task:
       echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" | tee -a /etc/pacman.conf; \
     fi
 
+    sed -i "s/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g" /etc/locale.gen
+    locale-gen
+    echo "LANG=en_US.UTF-8" > /etc/locale.conf
+    echo "KEYMAP=us" > /etc/vconsole.conf
+
     pacman --noconfirm -Syyu reflector rsync curl wget git-lfs openssh base-devel devtools sudo git lib32-readline lib32-zlib namcap fakeroot audit grep diffutils parallel
 
     useradd -m -d /home/builder -s /bin/bash -G wheel builder
     sed -i 's/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
     echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
     chown -R builder:builder /home/builder/
-
-    sed -i "s/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g" /etc/locale.gen
-    locale-gen
-    echo "LANG=en_US.UTF-8" > /etc/locale.conf
-    echo "KEYMAP=us" > /etc/vconsole.conf
 
     cd /home/builder
     sudo -u builder bash -c '
@@ -38,14 +38,14 @@ task:
     touch /home/builder/.ssh/config
     echo "-----BEGIN OPENSSH PRIVATE KEY-----
     b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
-    QyNTUxOQAAACD0F1z9s53prcpxeTJFByv5nKGQjKkqSTxUy2h+ky/K9gAAAKCnkBUJp5AV
-    CQAAAAtzc2gtZWQyNTUxOQAAACD0F1z9s53prcpxeTJFByv5nKGQjKkqSTxUy2h+ky/K9g
-    AAAEDVOvaV9Bv+dO5odjD7tStP4lA1fOTh6/yYQMGp2LjSIPQXXP2znemtynF5MkUHK/mc
-    oZCMqSpJPFTLaH6TL8r2AAAAGWFiaW5pc2hhbnRoMzQ2NEBnbWFpbC5jb20BAgME
-    -----END OPENSSH PRIVATE KEY-----" > /home/builder/.ssh/github_ed
-    echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPQXXP2znemtynF5MkUHK/mcoZCMqSpJPFTLaH6TL8r2 abinishanth3464@gmail.com" > /home/builder/.ssh/github_ed.pub
-    chmod 600 /home/builder/.ssh/github_ed
-    echo -e "Host github.com\n\tForwardAgent yes\n\tAddKeysToAgent yes\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null\n\tIdentityFile /home/builder/.ssh/github_ed" >> /home/builder/.ssh/config
+    QyNTUxOQAAACDuezS3EAxt1Y2halmhw33PsX36PckWwHfcUM2E5X6SNgAAAJBafXvmWn17
+    5gAAAAtzc2gtZWQyNTUxOQAAACDuezS3EAxt1Y2halmhw33PsX36PckWwHfcUM2E5X6SNg
+    AAAEB+/rrCOzmIaMpwYYMNOL0Cdm2j9W7CC7r5pDWCyQZ0O+57NLcQDG3VjaFqWaHDfc+x
+    ffo9yRbAd9xQzYTlfpI2AAAADWFiaW5pQHBvbm1hbmk=
+    -----END OPENSSH PRIVATE KEY-----" > /home/builder/.ssh/cirrusci
+    echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO57NLcQDG3VjaFqWaHDfc+xffo9yRbAd9xQzYTlfpI2 abini@ponmani" > /home/builder/.ssh/cirrusci.pub
+    chmod 600 /home/builder/.ssh/cirrusci
+    echo -e "Host github.com\n\tForwardAgent yes\n\tAddKeysToAgent yes\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null\n\tIdentityFile /home/builder/.ssh/cirrusci" >> /home/builder/.ssh/config
     eval "$(ssh-agent -s)"
     echo "$SSH_AUTH_SOCK"
     echo "github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl
@@ -53,11 +53,9 @@ task:
     github.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg=" > /home/builder/.ssh/known_hosts
     ssh-keyscan github.com >> /home/builder/.ssh/known_hosts
     sudo chown -R builder:builder /home/builder
-    ssh-add /home/builder/.ssh/github_ed
+    ssh-add /home/builder/.ssh/cirrusci
     ssh -T git@github.com
-    '
     cd /home/builder
-    sudo -u builder bash -c '
     sudo chown -R builder:builder .*
     git clone https://aur.archlinux.org/paru-bin.git
     git clone https://aur.archlinux.org/yay-bin.git
@@ -74,9 +72,7 @@ task:
     cd archfiery-pkgbuild/
     chmod +x *.sh
     ./build.sh
-    '
     cd /home/builder/archfiery-pkgbuild/
-    sudo -u builder bash -c '
     git clone git@github.com:MikuX-Dev/archfiery-repo.git /home/builder/archfiery-repo
     ./push.sh
     '
