@@ -8,8 +8,6 @@ btrfs-assistant
 caffeine-ng
 cpu-x
 cpupower-gui
-# davinci-resolve
-# davinci-resolve-studio
 debtap
 dex2jar
 downgrade
@@ -20,10 +18,8 @@ fancontrol-gui
 ffmpeg-full
 firmware-manager
 gtk3-nocsd-git
-librewolf-bin
 lightdm-webkit2-theme-glorious
 megasync-bin
-microsoft-edge-stable-bin
 mkinitcpio-firmware
 mkinitcpio-numlock
 mkinitcpio-openswap
@@ -34,32 +30,24 @@ obsidian-bin
 ocs-url
 octopi
 oh-my-zsh-git
-ollama-bin
 onlyoffice-bin
 pamac-aur
 paru-bin
 pomatez
-powershell-bin
 qbittorrent-enhanced
 signal-cli
 simplescreenrecorder-bin
-slack-desktop
 snapper-gui-git
-spotify
 stacer-bin
 tela-icon-theme-bin
 telegram-desktop-bin
-thorium-browser-bin
 thunar-extended
 thunar-megasync-bin
 thunar-secure-delete
 thunar-shares-plugin
 thunar-vcs-plugin
-timeshift-autosnap
 tlpui
 tor-browser-bin
-ungoogled-chromium-bin
-universal-android-debloater-bin
 update-grub
 vala-panel-appmenu-common
 vala-panel-appmenu-registrar-git
