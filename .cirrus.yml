@@ -20,10 +20,10 @@ task:
     echo "$github_ed" > .ssh/github_ed
     echo "$github_ed_pub" > .ssh/github_ed.pub
     chmod 600 .ssh/github_ed
-    echo -e "Host github.com\n\tForwardAgent yes\n\tAddKeysToAgent yes\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null\n\tIdentityFile .ssh/github_ed" >.ssh/config
+    echo -e "Host github.com\n\tForwardAgent yes\n\tAddKeysToAgent yes\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null\n\tIdentityFile .ssh/github_ed" > .ssh/config
+    cat .ssh/config
     eval "$(ssh-agent -s)"
-    ssh-add -l
-    ssh-add .ssh/github_ed
+    ssh-add -K .ssh/github_ed
     ssh -T git@github.com
     echo "$known_hosts" >> .ssh/known_hosts
     ssh-keyscan -t ed25519 github.com >> .ssh/known_hosts
@@ -54,7 +54,7 @@ task:
     ./build.sh
     '
   clone_repo_and_commit_script: |
-    cd /home/builder/
+    cd /home/builder/archfiery-pkgbuild/
     sudo -u builder bash -c '
     git clone git@github.com:MikuX-Dev/archfiery-repo.git /home/builder/archfiery-repo
     ./push.sh
