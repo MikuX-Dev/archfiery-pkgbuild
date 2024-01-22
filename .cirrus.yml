@@ -4,10 +4,10 @@ task:
   cron: "0 8 */4 * *"
   timeout_in: 120m
   container:
-    image: archlinux:latest
+    image: archlinux:base-devel
     cpu: 4
     memory: 12G
-  import_ssh_key_script: |
+  setup: |
     pacman-key --init
     pacman-key --populate
 
@@ -23,6 +23,11 @@ task:
     sed -i 's/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' /etc/sudoers
     echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
     chown -R builder:builder /home/builder/
+
+    sed -i "s/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g" /etc/locale.gen
+    locale-gen
+    echo "LANG=en_US.UTF-8" > /etc/locale.conf
+    echo "KEYMAP=us" > /etc/vconsole.conf
 
     cd /home/builder
     sudo -u builder bash -c '
@@ -47,23 +52,24 @@ task:
     github.com ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCj7ndNxQowgcQnjshcLrqPEiiphnt+VTTvDP6mHBL9j1aNUkY4Ue1gvwnGLVlOhGeYrnZaMgRK6+PKCUXaDbC7qtbW8gIkhL7aGCsOr/C56SJMy/BCZfxd1nWzAOxSDPgVsmerOBYfNqltV9/hWCqBywINIR+5dIg6JTJ72pcEpEjcYgXkE2YEFXV1JHnsKgbLWNlhScqb2UmyRkQyytRLtL+38TGxkxCflmO+5Z8CSSNY7GidjMIZ7Q4zMjA2n1nGrlTDkzwDCsw+wqFPGQA179cnfGWOWRVruj16z6XyvxvjJwbz0wQZ75XK5tKSb7FNyeIEs4TT4jk+S4dhPeAUC5y+bDYirYgM4GC7uEnztnZyaVWQ7B381AK4Qdrwt51ZqExKbQpTUNn+EjqoTwvqNj4kqx5QUCI0ThS/YkOxJCXmPUWZbhjpCg56i+2aB6CmK2JGhn57K5mj0MNdBXA4/WnwH6XoPWJzK5Nyu2zB3nAZp+S5hpQs+p1vN1/wsjk=
     github.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg=" > /home/builder/.ssh/known_hosts
     ssh-keyscan github.com >> /home/builder/.ssh/known_hosts
-    cat /home/builder/.ssh/config
-    cat /home/builder/.ssh/github_ed
-    cat /home/builder/.ssh/github_ed.pub
     sudo chown -R builder:builder /home/builder
     ssh-add /home/builder/.ssh/github_ed
-    ssh -vT git@github.com
+    ssh -T git@github.com
     '
   build_pkg_script: |
     cd /home/builder
     sudo -u builder bash -c '
     sudo chown -R builder:builder .*
     git clone https://aur.archlinux.org/paru-bin.git
+    git clone https://aur.archlinux.org/yay-bin.git
     sudo chown -R builder:builder .*
     cd paru-bin
     makepkg -sci --noconfirm --needed --noprogressbar --skippgpcheck
     cd -
-    rm -rf paru-bin*
+    cd yay-bin
+    makepkg -sci --noconfirm --needed --noprogressbar --skippgpcheck
+    cd -
+    rm -rf paru-bin* yay-bin*done
     git clone git@github.com:MikuX-Dev/archfiery-pkgbuild.git
     sudo chown -R builder:builder .*
     cd archfiery-pkgbuild/
