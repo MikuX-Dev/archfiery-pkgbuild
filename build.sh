@@ -64,9 +64,9 @@ install_aur_deps() {
 
   for dep in "${all_deps[@]}"; do
     if pacman -Ss "$dep" >/dev/null 2>&1; then
-      yay -S --needed --noconfirm --asdeps --sudoloop "$dep"
-    else
       paru -S --needed --noconfirm --asdeps --sudoloop --cleanafter --skipreview "$dep"
+    else
+      yay -S --needed --noconfirm --asdeps --sudoloop "$dep"
     fi
   done
 }

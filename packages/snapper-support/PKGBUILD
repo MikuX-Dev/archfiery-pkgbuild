@@ -1,12 +1,9 @@
-# Maintainer: dr460nf1r3 <dr460nf1r3 at linux dot org>
-# Contributor: Librewish <librewish@gmail.com># Maintainer: librewish <librewish@gmail.com>
-
 pkgname=snapper-support
 pkgver=1.1.2
 pkgrel=3
 pkgdesc='Support package for enabling Snapper with snap-pac and grub-btrfs'
 arch=('any')
-url="https://gitlab.com/-linux/packages/stable-pkgbuilds/snapper-support"
+url="https://gitlab.com/garuda-linux/packages/stable-pkgbuilds/snapper-support"
 license=('GPL3')
 depends=('snapper' 'snap-pac' 'grub-btrfs')
 makedepends=('git')
